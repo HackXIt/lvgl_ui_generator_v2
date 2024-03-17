@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "path/to/your/micropython/stubs"
+    ]
+}
