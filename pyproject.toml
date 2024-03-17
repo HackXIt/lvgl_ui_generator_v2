@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "lvgl-ui-generator-v2"
+version = "0.0.1"
+description = "A project to manage micropython dev-dependencies for lvgl_ui_generator"
+authors = ["HackXIt <hackxit@gmail.com>"]
+readme = "README.md"
+packages = [{include = "lvgl_ui_generator_v2"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+numpy = "^1.26.4"
+pillow = "^10.2.0"
+
+[tool.poetry.group.dev.dependencies]
+micropy-cli = "^4.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
