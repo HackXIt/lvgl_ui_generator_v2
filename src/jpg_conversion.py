@@ -5,7 +5,7 @@ from PIL import Image
 WIDTH, HEIGHT = 420, 320
 
 # Load the raw RGB565 data from the file
-with open('screenshot.raw', 'rb') as file:
+with open('screenshot.bin', 'rb') as file:
     raw_data = file.read()
 
 # Convert raw RGB565 data to a NumPy array
