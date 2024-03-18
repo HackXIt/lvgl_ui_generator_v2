@@ -10,6 +10,7 @@ packages = [{include = "lvgl_ui_generator_v2"}]
 python = ">=3.11,<3.12"
 numpy = "^1.26.4"
 pillow = "^10.2.0"
+invoke = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 micropy-cli = "^4.2.2"
