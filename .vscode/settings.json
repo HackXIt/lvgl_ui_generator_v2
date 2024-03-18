@@ -1,5 +1,11 @@
 {
     "python.analysis.extraPaths": [
-        "path/to/your/micropython/stubs"
-    ]
+        ".venv/lib/python3.11/site-packages",
+        "${workspaceFolder}/stubs",
+        "typings"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingModuleSource": "none"
+    },
 }
