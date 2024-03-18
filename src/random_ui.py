@@ -1,12 +1,9 @@
-import display_driver
+from display_driver_utils import driver
 import lvgl as lv
 import random
 # NOTE typing not available in micropython and making it work is difficult
 # from typing import List, Tuple, Self
 import time
-
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 800
 
 ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -26,6 +23,7 @@ class RandomUI:
         self.objects = []
         self.widgets = {'count': 0, 'objects': []}
         random.seed(int(time.time() * 1000000))
+        driver(width=self.width, height=self.height)
 
     def create_random_layout_flex(self):
         ...
