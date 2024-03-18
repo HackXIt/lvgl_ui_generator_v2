@@ -38,8 +38,9 @@ def build(ctx):
     unix_port_submodules = subprocess.run(['make', '-j4', '-C', 'ports/unix', 'submodules'], cwd=lv_micropython_dir, capture_output=True)
     unix_port = subprocess.run(['make', '-j4', '-C', 'ports/unix'], cwd=lv_micropython_dir, capture_output=True)
     # Restore lv_conf.h so that git doesn't complain about dirty changes
-    subprocess.run(['mv', lv_conf_temp, lv_conf_original])    
-    if mpy_cross.returncode == 0 and unix_port_submodules.returncode == 0 and unix_port.returncode == 0:
+    subprocess.run(['mv', lv_conf_temp, lv_conf_original])
+    return_codes = [mpy_cross.returncode, unix_port_submodules.returncode, unix_port.returncode]
+    if all(return_codes) == 0:
         # Copy the micropython binary to the root .venv directory
         subprocess.run(['cp', micropython, os.path.join(os.path.curdir, '.venv', 'bin', 'micropython')])
     else:
