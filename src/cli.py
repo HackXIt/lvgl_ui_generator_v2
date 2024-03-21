@@ -12,6 +12,7 @@ def process_arguments():
     parser.add_argument('-o', '--output_file', type=str, required=True, help='the output file')
     parser.add_argument('-d', '--delay_count', type=int, help='screenshot delay')
     parser.add_argument('-l', '--layout', type=str, required=True, help='the layout option')
+    parser.add_argument('-n', '--normalize', action='store_true', help='normalize the bounding boxes')
 
     # Parse the arguments
     args = parser.parse_args()

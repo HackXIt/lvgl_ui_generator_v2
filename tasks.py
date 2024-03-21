@@ -20,8 +20,11 @@ def convert(ctx, width='420', height='320', input='screenshot.bin', output='scre
     subprocess.run(['poetry', 'run', 'python', jpg_conversion, '-W', width, '-H', height, '-i', input, '-o', output])
 
 @task
-def sample(ctx, type='button', count='1', width='420', height='320', layout='none'):
-    gen = subprocess.run([micropython, main, '-W', width, '-H', height, '-c', count, '-t', type, '-o', 'screenshot.jpg', '-l', layout])
+def sample(ctx, type='button', count='1', width='420', height='320', layout='none', output='screenshot.jpg', normalize: bool = False):
+    if normalize:
+        gen = subprocess.run([micropython, main, '-W', width, '-H', height, '-c', count, '-t', type, '-o', output, '-l', layout, '-n'])
+    else:
+        gen = subprocess.run([micropython, main, '-W', width, '-H', height, '-c', count, '-t', type, '-o', output, '-l', layout])
     if gen.returncode == 0:
         print("UI sample generation successful.")
     else:
