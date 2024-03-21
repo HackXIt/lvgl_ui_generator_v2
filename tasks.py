@@ -5,7 +5,7 @@ import subprocess
 lv_micropython_dir = os.path.join(os.path.curdir, 'lv_micropython')
 micropython = os.path.join(os.path.curdir, 'lv_micropython', 'ports', 'unix', 'build-standard', 'micropython')
 main = os.path.join(os.path.curdir, 'src', 'main.py')
-jpg_conversion = os.path.join(os.path.curdir, 'src', 'jpg_conversion.py')
+jpg_conversion = os.path.join(os.path.curdir, 'src', 'bin_to_jpg_conversion.py')
 lv_conf_project = os.path.join(os.path.curdir, 'lv_conf.h')
 lv_conf_original = os.path.join(os.path.curdir, 'lv_micropython', 'lib', 'lv_bindings', 'lv_conf.h')
 lv_conf_temp = os.path.join(os.path.curdir, 'lv_conf.tmp')
@@ -16,9 +16,16 @@ def generate(ctx):
     subprocess.run([micropython, main, '-W', '420', '-H', '320', '-c', '1', '-t', ' '.join(widget_list), '-o', 'screenshot.raw', '-l', 'none'])
 
 @task
+def convert(ctx, width='420', height='320', input='screenshot.bin', output='screenshot.jpg'):
+    subprocess.run(['poetry', 'run', 'python', jpg_conversion, '-W', width, '-H', height, '-i', input, '-o', output])
+
+@task
 def sample(ctx, type='button', count='1', width='420', height='320', layout='none'):
-    subprocess.run([micropython, main, '-W', width, '-H', height, '-c', count, '-t', type, '-o', 'screenshot.bin', '-l', layout])
-    subprocess.run(['poetry', 'run', 'python', jpg_conversion, '-W', width, '-H', height, '-i', 'screenshot.bin', '-o', 'screenshot.jpg'])
+    gen = subprocess.run([micropython, main, '-W', width, '-H', height, '-c', count, '-t', type, '-o', 'screenshot.jpg', '-l', layout])
+    if gen.returncode == 0:
+        print("UI sample generation successful.")
+    else:
+        print("UI sample generation generation failed.")
 
 @task
 def clear(ctx):
@@ -28,23 +35,26 @@ def clear(ctx):
 def test(ctx):
     ...
 
+def run_and_print(cmd, cwd):
+    with subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as proc:
+        for line in proc.stdout:
+            print(line, end='')
+        return proc.wait()  # Wait for the subprocess to finish and get the return code
+
 @task
 def build(ctx):
     # Move lv_conf.h to a temporary location
     subprocess.run(['mv', lv_conf_original, lv_conf_temp])
     # Override lv_conf.h
     subprocess.run(['cp', lv_conf_project, lv_conf_original])
-    mpy_cross = subprocess.run(['make', '-j4', '-C', 'mpy-cross'], cwd=lv_micropython_dir, capture_output=True)
-    unix_port_submodules = subprocess.run(['make', '-j4', '-C', 'ports/unix', 'submodules'], cwd=lv_micropython_dir, capture_output=True)
-    unix_port = subprocess.run(['make', '-j4', '-C', 'ports/unix'], cwd=lv_micropython_dir, capture_output=True)
+    mpy_cross_returncode = run_and_print(['make', '-j4', '-C', 'mpy-cross'], lv_micropython_dir)
+    unix_port_submodules_returncode = run_and_print(['make', '-j4', '-C', 'ports/unix', 'submodules'], lv_micropython_dir)
+    unix_port_returncode = run_and_print(['make', '-j4', '-C', 'ports/unix'], lv_micropython_dir)
     # Restore lv_conf.h so that git doesn't complain about dirty changes
     subprocess.run(['mv', lv_conf_temp, lv_conf_original])
-    return_codes = [mpy_cross.returncode, unix_port_submodules.returncode, unix_port.returncode]
-    if all(return_codes) == 0:
+    return_codes = [mpy_cross_returncode, unix_port_submodules_returncode, unix_port_returncode]
+    if all(code == 0 for code in return_codes):
         # Copy the micropython binary to the root .venv directory
         subprocess.run(['cp', micropython, os.path.join(os.path.curdir, '.venv', 'bin', 'micropython')])
     else:
         print("Build failed.")
-        print(mpy_cross.stderr)
-        print(unix_port_submodules.stderr)
-        print(unix_port.stderr)
