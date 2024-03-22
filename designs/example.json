@@ -1,0 +1,95 @@
+{
+    "ui": {
+        "window": {
+            "title": "My Application",
+            "width": 800,
+            "height": 600
+        },
+        "root": {
+            "id": "mainContainer",
+            "type": "container",
+            "style": "mainContainerStyle",
+            "children": [
+                {
+                    "id": "appBar",
+                    "type": "container",
+                    "style": "appBarStyle",
+                    "children": [
+                        {
+                            "type": "label",
+                            "text": "My Application",
+                            "style": "titleStyle"
+                        },
+                        {
+                            "type": "button",
+                            "text": "Settings",
+                            "style": "buttonStyle"
+                        }
+                    ]
+                },
+                {
+                    "id": "mainContent",
+                    "type": "container",
+                    "style": "mainContentStyle",
+                    "children": [
+                        {
+                            "type": "random",
+                            "options": [
+                                "label",
+                                "button",
+                                "slider"
+                            ],
+                            "style": "randomWidgetStyle"
+                        }
+                    ]
+                },
+                {
+                    "id": "statusBar",
+                    "type": "container",
+                    "style": "statusBarStyle",
+                    "children": [
+                        {
+                            "type": "label",
+                            "text": "Status: OK",
+                            "style": "statusLabelStyle"
+                        }
+                    ]
+                }
+            ]
+        },
+        "styles": {
+            "mainContainerStyle": {
+                "flexDirection": "column",
+                "justifyContent": "space-between"
+            },
+            "appBarStyle": {
+                "backgroundColor": "#333",
+                "textColor": "#fff",
+                "height": "50px"
+            },
+            "titleStyle": {
+                "fontSize": "24px",
+                "fontWeight": "bold"
+            },
+            "buttonStyle": {
+                "backgroundColor": "#555",
+                "textColor": "#fff",
+                "padding": "10px"
+            },
+            "statusBarStyle": {
+                "backgroundColor": "#222",
+                "textColor": "#fff",
+                "height": "30px"
+            },
+            "statusLabelStyle": {
+                "fontSize": "14px"
+            },
+            "mainContentStyle": {
+                "backgroundColor": "#eee"
+            },
+            "randomWidgetStyle": {
+                "defaultFontSize": "16px"
+            }
+        }
+    }
+}
