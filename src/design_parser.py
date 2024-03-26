@@ -117,10 +117,15 @@ class UiLoader:
         style.init()
 
         for prop, value in style_def.items():
+            if prop == "selector":
+                continue
             setter_name = f"set_{prop}"
             if hasattr(style, setter_name):
                 setter = getattr(style, setter_name)
                 converted_value = self.convert_value(prop, value)
+                if(converted_value == None):
+                    print(f"Unsupported value conversion: {value} for style property {prop}")
+                    continue
                 try:
                     setter(converted_value)
                 except TypeError as e:
@@ -133,12 +138,24 @@ class UiLoader:
     def convert_value(self, prop_name, value):
         # This function converts the value based on the property name
         if "color" in prop_name:
-            return lv.color_hex(value.strip("#"))
+            converted_value = int(value.strip("#"), 16)
+            print(f"Color property conversion: {prop_name}:{value} => {converted_value:x}")
+            return lv.color_hex(converted_value)
         elif "font" in prop_name:
-            # Assuming LVGL has a mapping from string to font object
-            return getattr(lv, value)
-        # Add more conversions as needed for other property types
-        return value
+            print(f"Font property: {prop_name}:{value}")
+            # TODO micropython doesn't support font ?
+            return None
+        elif type(value) == int:
+            return value
+        elif prop_name == "selector":
+            if hasattr(lv.PART, value.upper()):
+                return getattr(lv.PART, value.upper())
+            elif hasattr(lv.STATE, value.upper()):
+                return getattr(lv.STATE, value.upper())
+            else:
+                return None
+        # TODO Add more conversions as needed for other property types
+        return None
 
     def apply_style(self, widget, style_name):
         # Style application logic goes here
@@ -148,9 +165,16 @@ class UiLoader:
                 raise ValueError(f"Style not found: {style_name}")
             style = self.create_style(self.ui["styles"][style_name])
             self.styles[style_name] = style
-        else:
-            print(f"Apply style {style_name} to widget {widget}")
-        pass
+            if "selector" in self.ui["styles"][style_name]:
+                selector = self.convert_value("selector", self.ui["styles"][style_name]["selector"])
+                if selector == None:
+                    print(f"Invalid selector value for style: {style_name}:{self.ui['styles'][style_name]['selector']}")
+                    self.styles[f"{style_name}_selector"] = lv.PART.MAIN
+                else:
+                    self.styles[f"{style_name}_selector"] = selector
+            else:
+                self.styles[f"{style_name}_selector"] = lv.PART.MAIN
+        widget.add_style(self.styles[style_name], self.styles[f"{style_name}_selector"])
 
     def get_root_widget(self):
         return self.root_widget
