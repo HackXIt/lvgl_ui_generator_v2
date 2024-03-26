@@ -27,8 +27,9 @@ class UiLoader:
         # Parse the root element
         self.root_widget = self.parse_element(self.ui["root"])
         self.root_widget.set_parent(lv.screen_active())
-        self.root_widget.set_width(self.width)
-        self.root_widget.set_height(self.height)
+        # NOTE The below can be accomplished by setting the width and height of the root widget via style properties
+        # self.root_widget.set_width(self.width)
+        # self.root_widget.set_height(self.height)
 
     def parse_element(self, element):
         # Create a widget based on the element type
