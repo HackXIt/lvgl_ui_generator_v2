@@ -1,9 +1,9 @@
 {
     "ui": {
         "window": {
-            "title": "My Application",
-            "width": 800,
-            "height": 600
+            "width": 480,
+            "height": 320,
+            "title": "My Application"
         },
         "root": {
             "id": "mainContainer",
@@ -59,36 +59,45 @@
         },
         "styles": {
             "mainContainerStyle": {
-                "flexDirection": "column",
-                "justifyContent": "space-between"
+                "bg_color": "#FFFFFF",
+                "radius": 5,
+                "border_width": 2,
+                "border_color": "#000000",
+                "pad_all": 10
             },
             "appBarStyle": {
-                "backgroundColor": "#333",
-                "textColor": "#fff",
-                "height": "50px"
+                "bg_color": "#333333",
+                "pad_all": 5
             },
             "titleStyle": {
-                "fontSize": "24px",
-                "fontWeight": "bold"
+                "text_color": "#FF0000",
+                "text_font": "FONT_DEFAULT",
+                "text_letter_space": 2
             },
             "buttonStyle": {
-                "backgroundColor": "#555",
-                "textColor": "#fff",
-                "padding": "10px"
-            },
-            "statusBarStyle": {
-                "backgroundColor": "#222",
-                "textColor": "#fff",
-                "height": "30px"
-            },
-            "statusLabelStyle": {
-                "fontSize": "14px"
+                "bg_color": "#555555",
+                "text_color": "#FFFFFF",
+                "radius": 3,
+                "border_width": 1,
+                "border_color": "#AAAAAA"
             },
             "mainContentStyle": {
-                "backgroundColor": "#eee"
+                "bg_color": "#EEEEEE",
+                "pad_all": 15
             },
             "randomWidgetStyle": {
-                "defaultFontSize": "16px"
+                "bg_color": "#CCCCCC",
+                "border_width": 1,
+                "border_color": "#888888"
+            },
+            "statusBarStyle": {
+                "bg_color": "#222222",
+                "text_color": "#FFFFFF",
+                "pad_hor": 10
+            },
+            "statusLabelStyle": {
+                "text_color": "#FFFFFF",
+                "text_font": "FONT_DEFAULT"
             }
         }
     }

@@ -27,6 +27,8 @@ class UiLoader:
         # Parse the root element
         self.root_widget = self.parse_element(self.ui["root"])
         self.root_widget.set_parent(lv.screen_active())
+        self.root_widget.set_width(self.width)
+        self.root_widget.set_height(self.height)
 
     def parse_element(self, element):
         # Create a widget based on the element type
@@ -109,10 +111,34 @@ class UiLoader:
 
         return widget
     
-    def create_style(self, element):
-        # Create a style based on the style definition
-        print(element)
-        pass
+    def create_style(self, style_def):
+        print(f"Creating style: {style_def}")
+        style = lv.style_t()
+        style.init()
+
+        for prop, value in style_def.items():
+            setter_name = f"set_{prop}"
+            if hasattr(style, setter_name):
+                setter = getattr(style, setter_name)
+                converted_value = self.convert_value(prop, value)
+                try:
+                    setter(converted_value)
+                except TypeError as e:
+                    print(f"TypeError setting style property {prop}: {e}")
+            else:
+                print(f"Unsupported style property: {prop}")
+
+        return style
+    
+    def convert_value(self, prop_name, value):
+        # This function converts the value based on the property name
+        if "color" in prop_name:
+            return lv.color_hex(value.strip("#"))
+        elif "font" in prop_name:
+            # Assuming LVGL has a mapping from string to font object
+            return getattr(lv, value)
+        # Add more conversions as needed for other property types
+        return value
 
     def apply_style(self, widget, style_name):
         # Style application logic goes here
