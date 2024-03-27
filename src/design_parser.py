@@ -40,6 +40,8 @@ class UiLoader:
 
     def parse_ui(self):
         # Parse the root element
+        if "root" not in self.ui or type(self.ui["root"]) is not dict:
+            raise ValueError(f"UI must have 'root' property of type dict: {self.ui}")
         self.root_widget = self.parse_element(self.ui["root"])
         self.root_widget.set_parent(lv.screen_active())
         # NOTE The below can be accomplished by setting the width and height of the root widget via style properties
