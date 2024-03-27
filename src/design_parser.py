@@ -9,12 +9,16 @@ class UiLoader:
     special_types = ["container", "random"]
     widget_types = ["arc", "bar", "button", "buttonmatrix", "calendar", "chart", "checkbox", "dropdown", "image", "imagebutton", "keyboard", "label", "led", "line", "list", "menu", "messagebox", "roller", "scale", "slider", "spangroup", "spinbox", "spinner", "switch", "table", "tabview", "textarea", "tileview", "window"]
     valid_types = special_types + widget_types
+    valid_layouts = ["none", "grid", "flex"]
+    valid_flow = ["row", "column", "row_wrap", "column_wrap", "row_reverse", "column_reverse"]
     def __init__(self, json_file):
         # Load JSON data from file
         with open(json_file, "r") as file:
             json_data = file.read()
         # Load JSON data
         self.data = json.loads(json_data)
+        if "ui" not in self.data or type(self.data["ui"]) is not dict:
+            raise ValueError(f"JSON must have 'ui' property of type dict: {self.data}")
         self.ui = self.data["ui"]
         # Create a dictionary to store references to created widgets
         self.widgets = {}
@@ -22,9 +26,16 @@ class UiLoader:
     
     def initialize_screen(self):
         # Create the screen
+        if "window" not in self.ui or type(self.ui["window"]) is not dict:
+            raise ValueError(f"UI must have 'window' property of type dict: {self.ui}")
+        if "width" not in self.ui["window"] or type(self.ui["window"]["width"]) is not int:
+            raise ValueError(f"Window must have 'width' property of type int: {self.ui['window']}")
+        if "height" not in self.ui["window"] or type(self.ui["window"]["height"]) is not int:
+            raise ValueError(f"Window must have 'height' property of type int: {self.ui['window']}")
         self.width = self.ui["window"]["width"]
         self.height = self.ui["window"]["height"]
-        self.title = self.ui["window"]["title"]
+        if "title" in self.ui["window"]:
+            self.title = self.ui["window"]["title"] # FIXME window title is not used
         self.screen = driver(width=self.width, height=self.height)
 
     def parse_ui(self):
@@ -51,7 +62,7 @@ class UiLoader:
         widget = None
         widget_type = element["type"]
         if widget_type not in self.valid_types:
-            raise ValueError(f"Invalid widget type: {widget_type}, valid types are: {self.valid_types}")
+            raise ValueError(f"Invalid widget type: {widget_type}. Valid types are: {self.valid_types}")
         if widget_type == 'container':
             widget = self.create_container(element)
         elif widget_type == "random":
@@ -130,12 +141,12 @@ class UiLoader:
 # NOTE ------------ SPECIAL CREATION METHODS ------------
 
     def create_container(self, element) -> lv.obj:
-        if "options" not in element:
-            raise ValueError(f"Container widget must have options: {element}")
-        container = lv.obj(lv.screen_active())
+        if "options" not in element or type(element["options"]) is not dict:
+            raise ValueError(f"Container widget must have 'options' of type dict: {element}")
         options = element["options"]
-        if "layout" not in options:
-            raise ValueError(f"Container widget must have layout: {options}. Valid options are: ['none', 'grid', 'flex']")
+        if "layout" not in options or options["layout"] not in self.valid_layouts:
+            raise ValueError(f"Container widget must have 'layout' property: {options}. Valid options are: {self.valid_layouts}")
+        container = lv.obj(lv.screen_active())
         layout = options["layout"]
         if layout == "none":
             container.set_layout(lv.LAYOUT.NONE)
@@ -147,32 +158,30 @@ class UiLoader:
     
     def configure_flex_layout(self, container, options):
         container.set_layout(lv.LAYOUT.FLEX)
-        if "flow" in options:
-            flow = options["flow"]
-            if flow == "row":
-                container.set_flex_flow(lv.FLEX_FLOW.ROW)
-            elif flow == "column":
-                container.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-            elif flow == "row_wrap":
-                container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
-            elif flow == "column_wrap":
-                container.set_flex_flow(lv.FLEX_FLOW.COLUMN_WRAP)
-            elif flow == "row_reverse":
-                container.set_flex_flow(lv.FLEX_FLOW.ROW_REVERSE)
-            elif flow == "column_reverse":
-                container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
-        else:
+        if "flow" not in options or options["flow"] not in self.valid_flow:
+            raise ValueError(f"Flex layout must have 'flow' property: {options}. Valid options are: {self.valid_flow}")
+        flow = options["flow"]
+        if flow == "row":
             container.set_flex_flow(lv.FLEX_FLOW.ROW)
+        elif flow == "column":
+            container.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+        elif flow == "row_wrap":
+            container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
+        elif flow == "column_wrap":
+            container.set_flex_flow(lv.FLEX_FLOW.COLUMN_WRAP)
+        elif flow == "row_reverse":
+            container.set_flex_flow(lv.FLEX_FLOW.ROW_REVERSE)
+        elif flow == "column_reverse":
+            container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
 
     def configure_grid_layout(self, container, options):
+        if "grid_dsc" not in options or type(options["grid_dsc"]) is not dict:
+            raise ValueError(f"Grid layout must have 'grid_dsc' of type dict: {options}")
         container.set_layout(lv.LAYOUT.GRID)
         # TODO Need to properly handle grid placements of children with grid layout
-        if "grid_dsc" in options:
-            if "col_dsc" not in options["grid_dsc"] or "row_dsc" not in options["grid_dsc"]:
-                raise ValueError(f"grid_dsc must have col_dsc and row_dsc: {options['grid_dsc']}")
-            container.set_grid_dsc_array(options["grid_dsc"]["col_dsc"], options["grid_dsc"]["row_dsc"])
-        else:
-            container.set_grid_dsc_array([1, 1], [1, 1])
+        if "col_dsc" not in options["grid_dsc"] or type(options["grid_dsc"]["col_dsc"]) is not list or "row_dsc" not in options["grid_dsc"] or type(options["grid_dsc"]["row_dsc"]) is not list:
+            raise ValueError(f"grid_dsc must have 'col_dsc' and 'row_dsc' of type list: {options['grid_dsc']}")
+        container.set_grid_dsc_array(options["grid_dsc"]["col_dsc"], options["grid_dsc"]["row_dsc"])
     
     def create_random_widget(self, element):
         # FIXME Placement of random widget is not handled properly (inside grid layout)
