@@ -389,7 +389,7 @@ class UiLoader:
     
     def create_style(self, style_def):
         print(f"Creating style: {style_def}")
-        style = lv.style_t()
+        style = lv.style_t() # FIXME missing parameter 'args' of type '_style_t_type' (unresolved) - ignore?
         style.init()
 
         for prop, value in style_def.items():

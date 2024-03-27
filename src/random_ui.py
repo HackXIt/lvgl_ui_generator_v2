@@ -41,11 +41,11 @@ class RandomUI:
             widget = lv.label(self.container)
             widget.set_text('Label')
         elif widget_type == 'image':
-            widget = lv.img(self.container)
+            widget = lv.image(self.container)
             widget.set_src(lv.SYMBOL.OK)
         elif widget_type == 'line':
             widget = lv.line(self.container)
-            widget.set_points([(0, 0), (self.width, self.height)])
+            # widget.set_points([(0, 0), (self.width, self.height)])
         elif widget_type == 'bar':
             widget = lv.bar(self.container)
             widget.set_value(50, lv.ANIM.ON)
@@ -62,7 +62,7 @@ class RandomUI:
             widget = lv.roller(self.container)
             for i in range(random.randint(1, 10)):
                 options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-            widget.set_options(options)
+            widget.set_options(options, lv.roller.MODE.NORMAL) # FIXME expected type 'roller' - ignore?
         elif widget_type == 'dropdown':
             widget = lv.dropdown(self.container)
             for i in range(random.randint(1, 10)):
@@ -73,13 +73,13 @@ class RandomUI:
             widget.set_text('Textarea')
         elif widget_type == 'chart':
             widget = lv.chart(self.container)
-            ser1 = widget.add_series(lv.color_hex(0x2587FF))
-            ser2 = widget.add_series(lv.color_hex(0xFF0000))
-            widget.set_type(ser1, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            widget.set_type(ser2, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            widget.set_point_count(ser1, 10)
-            widget.set_point_count(ser2, 10)
-            widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
+            # ser1 = widget.add_series(lv.color_hex(0x2587FF))
+            # ser2 = widget.add_series(lv.color_hex(0xFF0000))
+            # widget.set_type(ser1, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
+            # widget.set_type(ser2, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
+            # widget.set_point_count(ser1, 10)
+            # widget.set_point_count(ser2, 10)
+            # widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
         widget.set_parent(self.container)
         type_count = [widget['object'] for widget in self.widgets['objects'] if widget['type'] == widget_type]
         self.objects.append(widget)
@@ -94,7 +94,7 @@ class RandomUI:
         if self.layout not in self.layout_options:
             raise ValueError(f'Invalid layout: {self.layout} (valid options: {",".join(self.layout_options)})')
         # Create a screen
-        self.container = lv.obj()
+        self.container = lv.obj(lv.screen_active())
         self.container.set_size(self.width, self.height)
         # lv.scr_load(scr)
 
