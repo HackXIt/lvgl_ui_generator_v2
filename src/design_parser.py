@@ -98,7 +98,7 @@ class UiLoader:
             # widget.set_point_count(ser2, 10)
             # widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
         elif widget_type == "random":
-            choice = random.choice(element["options"])
+            choice = random.choice(element["options"].skip("random"))
             element["type"] = choice
             return self.create_widget(element)
 
