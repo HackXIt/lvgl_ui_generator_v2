@@ -1,0 +1,141 @@
+{
+    "ui": {
+        "window": {
+            "width": 800,
+            "height": 480,
+            "title": "Smart Home Control"
+        },
+        "root": {
+            "id": "mainContainer",
+            "type": "container",
+            "options": {
+                "layout": "flex",
+                "flow": "column"
+            },
+            "style": "mainContainerStyle",
+            "children": [
+                {
+                    "id": "navBar",
+                    "type": "container",
+                    "options": {
+                        "layout": "flex",
+                        "flow": "row"
+                    },
+                    "style": "navBarStyle",
+                    "children": [
+                        {
+                            "type": "label",
+                            "text": "Smart Home",
+                            "style": "navBarTitleStyle"
+                        },
+                        {
+                            "type": "button",
+                            "text": "Settings",
+                            "style": "navBarButtonStyle"
+                        }
+                    ]
+                },
+                {
+                    "id": "controlPanel",
+                    "type": "container",
+                    "options": {
+                        "layout": "flex",
+                        "flow": "row_wrap"
+                    },
+                    "style": "controlPanelStyle",
+                    "children": [
+                        {
+                            "type": "button",
+                            "text": "Lights",
+                            "style": "controlButtonStyle"
+                        },
+                        {
+                            "type": "button",
+                            "text": "Thermostat",
+                            "style": "controlButtonStyle"
+                        },
+                        {
+                            "type": "button",
+                            "text": "Cameras",
+                            "style": "controlButtonStyle"
+                        },
+                        {
+                            "type": "button",
+                            "text": "Locks",
+                            "style": "controlButtonStyle"
+                        }
+                    ]
+                },
+                {
+                    "id": "statusBar",
+                    "type": "container",
+                    "options": {
+                        "layout": "none"
+                    },
+                    "style": "statusBarStyle",
+                    "children": [
+                        {
+                            "type": "label",
+                            "text": "System Status: All Good",
+                            "style": "statusLabelStyle"
+                        }
+                    ]
+                }
+            ]
+        },
+        "styles": {
+            "mainContainerStyle": {
+                "bg_color": "#F5F5F5",
+                "width": 800,
+                "height": 480,
+                "pad_all": 10
+            },
+            "navBarStyle": {
+                "bg_color": "#3D6DCC",
+                "height": 60,
+                "width": 780,
+                "pad_all": 10
+            },
+            "navBarTitleStyle": {
+                "text_color": "#FFFFFF",
+                "text_font": "FONT_DEFAULT",
+                "align": "left"
+            },
+            "navBarButtonStyle": {
+                "bg_color": "#2B579A",
+                "text_color": "#FFFFFF",
+                "radius": 5,
+                "align": "right"
+            },
+            "controlPanelStyle": {
+                "bg_color": "#EFEFEF",
+                "pad_all": 15,
+                "width": 780,
+                "height": 300,
+                "y": 70
+            },
+            "controlButtonStyle": {
+                "bg_color": "#D3D3D3",
+                "text_color": "#333333",
+                "border_width": 1,
+                "border_color": "#A6A6A6",
+                "radius": 4,
+                "width": 180,
+                "height": 70,
+                "margin_all": 10
+            },
+            "statusBarStyle": {
+                "bg_color": "#4E4E4E",
+                "text_color": "#FFFFFF",
+                "width": 780,
+                "height": 50,
+                "y": 380
+            },
+            "statusLabelStyle": {
+                "text_color": "#FFFFFF",
+                "text_font": "FONT_DEFAULT",
+                "align": "center"
+            }
+        }
+    }
+}

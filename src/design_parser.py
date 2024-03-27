@@ -3,6 +3,8 @@ import lvgl as lv
 import json
 import random
 
+ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
 class UiLoader:
     valid_types = ["container", "label", "button", "image", "line", "bar", "slider", "switch", "checkbox", "roller", "dropdown", "textarea", "chart", "random"]
     def __init__(self, json_file):
@@ -34,13 +36,16 @@ class UiLoader:
     def parse_element(self, element):
         # Create a widget based on the element type
         widget = self.create_widget(element)
-        
         # Process child elements if they exist
         if "children" in element:
             for child in element["children"]:
                 child_widget = self.parse_element(child)
                 child_widget.set_parent(widget)
+        if "style" in element:
+            self.apply_style(widget, element["style"])
         return widget
+
+# NOTE ------------ WIDGET CREATION METHODS ------------
 
     def create_widget(self, element) -> lv.obj | lv.button | lv.label | lv.image | lv.line | lv.bar | lv.slider | lv.switch | lv.checkbox | lv.roller | lv.dropdown | lv.textarea | lv.chart:
         widget = None
@@ -48,69 +53,206 @@ class UiLoader:
         if widget_type not in self.valid_types:
             raise ValueError(f"Invalid widget type: {widget_type}, valid types are: {self.valid_types}")
         if widget_type == 'container':
-            widget = lv.obj(lv.screen_active())
+            widget = self.create_container(element)
         elif widget_type == 'button':
-            widget = lv.button(lv.screen_active())
-            label = lv.label(widget)
-            label.set_parent(widget)
-            label.set_text(element["text"]) if "text" in element else label.set_text('Button')
+            widget = self.create_button(element)
         elif widget_type == 'label':
-            widget = lv.label(lv.screen_active())
-            widget.set_text(element["text"]) if "text" in element else widget.set_text('Label')
+            widget = self.create_label(element)
         elif widget_type == 'image':
-            widget = lv.image(lv.screen_active())
-            # widget.set_src(lv.SYMBOL.OK)
+            widget = self.create_image(element)
         elif widget_type == 'line':
-            widget = lv.line(lv.screen_active())
-            # widget.set_points([(0, 0), (self.width, self.height)])
+            widget = self.create_line(element)
         elif widget_type == 'bar':
-            widget = lv.bar(lv.screen_active())
-            # widget.set_value(50, lv.ANIM.ON)
+            widget = self.create_bar(element)
         elif widget_type == 'slider':
-            widget = lv.slider(lv.screen_active())
-            # widget.set_range(0, 100)
-            # widget.set_value(50, lv.ANIM.ON)
-        elif widget_type == 'switch':
-            widget = lv.switch(lv.screen_active())
-        elif widget_type == 'checkbox':
-            widget = lv.checkbox(lv.screen_active())
-            # widget.set_text('Checkbox')
-        elif widget_type == 'roller':
-            widget = lv.roller(lv.screen_active())
-            # for i in range(random.randint(1, 10)):
-            #     options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-            # widget.set_options(options)
+            widget = self.create_slider(element)
         elif widget_type == 'dropdown':
-            widget = lv.dropdown(lv.screen_active())
-            # for i in range(random.randint(1, 10)):
-            #     options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-            # widget.set_options(options)
-        elif widget_type == 'textarea':
-            widget = lv.textarea(lv.screen_active())
-            # widget.set_text('Textarea')
+            widget = self.create_dropdown(element)
         elif widget_type == 'chart':
-            widget = lv.chart(lv.screen_active())
-            # ser1 = widget.add_series(lv.color_hex(0x2587FF))
-            # ser2 = widget.add_series(lv.color_hex(0xFF0000))
-            # widget.set_type(ser1, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            # widget.set_type(ser2, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            # widget.set_point_count(ser1, 10)
-            # widget.set_point_count(ser2, 10)
-            # widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
+            widget = self.create_chart(element)
+        elif widget_type == 'switch':
+            widget = self.create_switch(element)
+        elif widget_type == 'checkbox':
+            widget = self.create_checkbox(element)
+        elif widget_type == 'roller':
+            widget = self.create_roller(element)
+        elif widget_type == 'textarea':
+            widget = self.create_textarea(element)
         elif widget_type == "random":
-            choice = random.choice(list(filter(lambda x: x != "random", element["options"])))
-            element["type"] = choice
-            return self.create_widget(element)
-
-        # Apply styles (more complex style handling should be added here)
-        if "style" in element:
-            self.apply_style(widget, element["style"]) if widget else print(f"No widget to apply style to. {element}")
-
-        # Store widget reference by id if id exists
-        if "id" in element:
-            self.widgets[element["id"]] = widget
-
+            # FIXME Placement of random widget is not handled properly (inside grid layout)
+            if "parent_id" not in element:
+                raise ValueError(f"Random widget must have parent_id: {element}")
+            if "count" not in element:
+                raise ValueError(f"Random widget must have count: {element}")
+            if "count" in element:
+                for i in range(element["count"]):
+                    element["type"] = random.choice(element["options"])
+                    widget = self.create_widget(element)
+                    widget.set_parent(self.widgets[element["parent_id"]])
+                    if "style" in element:
+                        self.apply_style(widget, element["style"])
+        if widget == None:
+            raise ValueError(f"Failed to create widget: {element}")
+        # Create a unique ID for the widget if it wasn't provided
+        if "id" not in element:
+            # Count types of the widget
+            count = sum([1 for w in self.widgets.values() if type(w) == type(widget)])
+            element["id"] = f"{widget_type}_{count}"
+        if element["id"] in self.widgets:
+            raise ValueError(f"Widget with ID '{element['id']}' already exists. IDs must be unique.")
+        self.widgets[element["id"]] = widget
+        print(f"Created widget '{element['id']}': {element}")
         return widget
+    
+    def create_container(self, element) -> lv.obj:
+        if "options" not in element:
+            raise ValueError(f"Container widget must have options: {element}")
+        container = lv.obj(lv.screen_active())
+        options = element["options"]
+        if "layout" not in options:
+            raise ValueError(f"Container widget must have layout: {options}. Valid options are: ['none', 'grid', 'flex']")
+        layout = options["layout"]
+        if layout == "none":
+            container.set_layout(lv.LAYOUT.NONE)
+        elif layout == "grid":
+            self.configure_grid_layout(container, options)
+        elif layout == "flex":
+            self.configure_flex_layout(container, options)
+        return container
+    
+    def configure_flex_layout(self, container, options):
+        container.set_layout(lv.LAYOUT.FLEX)
+        if "flow" in options:
+            flow = options["flow"]
+            if flow == "row":
+                container.set_flex_flow(lv.FLEX_FLOW.ROW)
+            elif flow == "column":
+                container.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+            elif flow == "row_wrap":
+                container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
+            elif flow == "column_wrap":
+                container.set_flex_flow(lv.FLEX_FLOW.COLUMN_WRAP)
+            elif flow == "row_reverse":
+                container.set_flex_flow(lv.FLEX_FLOW.ROW_REVERSE)
+            elif flow == "column_reverse":
+                container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
+        else:
+            container.set_flex_flow(lv.FLEX_FLOW.ROW)
+
+    def configure_grid_layout(self, container, options):
+        container.set_layout(lv.LAYOUT.GRID)
+        # TODO Need to properly handle grid placements of children with grid layout
+        if "grid_dsc" in options:
+            if "col_dsc" not in options["grid_dsc"] or "row_dsc" not in options["grid_dsc"]:
+                raise ValueError(f"grid_dsc must have col_dsc and row_dsc: {options['grid_dsc']}")
+            container.set_grid_dsc_array(options["grid_dsc"]["col_dsc"], options["grid_dsc"]["row_dsc"])
+        else:
+            container.set_grid_dsc_array([1, 1], [1, 1])
+    
+    def create_button(self, element) -> lv.button:
+        # FIXME Label of button currently ignores style properties (uses defaults)
+        widget = lv.button(lv.screen_active())
+        label = lv.label(widget)
+        label.set_parent(widget)
+        if "text" not in element:
+            text = "".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
+            element["text"] = text
+        label.set_text(element["text"])
+        return widget
+
+    def create_label(self, element) -> lv.label:
+        widget = lv.label(lv.screen_active())
+        if "text" not in element:
+            text = "".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
+            element["text"] = text
+        widget.set_text(element["text"])
+        return widget
+
+    def create_image(self, element) -> lv.image:
+        # TODO Implement image widget
+        widget = lv.image(lv.screen_active())
+        # widget.set_src(lv.SYMBOL.OK)
+        return widget
+
+    def create_line(self, element) -> lv.line:
+        # TODO Implement line widget (also tough to implement)
+        widget = lv.line(lv.screen_active())
+        # if "options" in element:
+        #     points = element["options"].get("points", [])
+        #     widget.set_points(points)
+        return widget
+
+    def create_bar(self, element) -> lv.bar:
+        widget = lv.bar(lv.screen_active())
+        if "options" in element:
+            range_min = element["options"].get("range_min", 0)
+            range_max = element["options"].get("range_max", 100)
+            value = element["options"].get("value", 0)
+            widget.set_range(range_min, range_max)
+            widget.set_value(value, lv.ANIM.ON)
+        return widget
+
+    def create_slider(self, element) -> lv.slider:
+        widget = lv.slider(lv.screen_active())
+        if "options" in element:
+            range_min = element["options"].get("range_min", 0)
+            range_max = element["options"].get("range_max", 100)
+            value = element["options"].get("value", 0)
+            widget.set_range(range_min, range_max)
+            widget.set_value(value, lv.ANIM.ON)
+        return widget
+
+    def create_dropdown(self, element) -> lv.dropdown:
+        widget = lv.dropdown(lv.screen_active())
+        if "options" in element:
+            options = element["options"].get("options", [])
+            if len(options) == 0:
+                for i in range(random.randint(1, 10)):
+                    options.append("".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))]))
+            widget.set_options("\n".join(options))
+        return widget
+
+    def create_chart(self, element) -> lv.chart:
+        # TODO Implement chart widget (also tough to implement)
+        widget = lv.chart(lv.screen_active())
+        # if "options" in element:
+        #     chart_type = getattr(lv.chart, element["options"].get("type", "TYPE.LINE"))
+        #     point_count = element["options"].get("point_count", 10)
+        #     series_options = element["options"].get("series", [])
+        #     widget.set_type(chart_type)
+        #     widget.set_point_count(point_count)
+        #     for series_option in series_options:
+        #         series = widget.add_series(lv.color_hex(self.convert_value("color", series_option["color"]))))
+        #         points = series_option.get("points", [])
+        #         widget.set_points(series, points)
+        return widget
+
+    def create_switch(self, element) -> lv.switch:
+        # TODO Implement switch widget
+        widget = lv.switch(lv.screen_active())
+        return widget
+
+    def create_checkbox(self, element) -> lv.checkbox:
+        # TODO Implement checkbox widget
+        widget = lv.checkbox(lv.screen_active())
+        # widget.set_text('Checkbox')
+        return widget
+
+    def create_roller(self, element) -> lv.roller:
+        # TODO Implement roller widget
+        widget = lv.roller(lv.screen_active())
+        # for i in range(random.randint(1, 10)):
+        #     options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
+        # widget.set_options(options)
+        return widget
+
+    def create_textarea(self, element) -> lv.textarea:
+        # TODO Implement textarea widget
+        widget = lv.textarea(lv.screen_active())
+        # widget.set_text('Textarea')
+        return widget
+    
+# NOTE ------------ STYLE CREATION METHODS ------------
     
     def create_style(self, style_def):
         print(f"Creating style: {style_def}")
@@ -146,6 +288,35 @@ class UiLoader:
             print(f"Font property: {prop_name}:{value}")
             # TODO micropython doesn't support font ?
             return None
+        elif "align" in prop_name:
+            if value == "center":
+                return lv.ALIGN.CENTER
+            elif value == "top-left":
+                return lv.ALIGN.TOP_LEFT
+            elif value == "top-right":
+                return lv.ALIGN.TOP_RIGHT
+            elif value == "top":
+                return lv.ALIGN.TOP_MID
+            elif value == "bottom-left":
+                return lv.ALIGN.BOTTOM_LEFT
+            elif value == "bottom-right":
+                return lv.ALIGN.BOTTOM_RIGHT
+            elif value == "bottom":
+                return lv.ALIGN.BOTTOM_MID
+            elif value == "left":
+                return lv.ALIGN.LEFT_MID
+            elif value == "right":
+                return lv.ALIGN.RIGHT_MID
+            else:
+                return lv.ALIGN.DEFAULT
+        elif "width" in prop_name or "height" in prop_name:
+            if type(value) == float:
+                # FIXME Percentage values should be calculated in relation to the parent widget
+                new_value = int(value * self.width) if "width" in prop_name else int(value * self.height)
+                print(f"Size property conversion: {prop_name}:{value} => {new_value}")
+                return new_value
+            elif type(value) == int:
+                return value
         elif type(value) == int:
             return value
         elif prop_name == "selector":
@@ -177,12 +348,14 @@ class UiLoader:
                 self.styles[f"{style_name}_selector"] = lv.PART.MAIN
         widget.add_style(self.styles[style_name], self.styles[f"{style_name}_selector"])
 
+# NOTE ------------ GETTERS ------------
+
     def get_root_widget(self):
         return self.root_widget
 
 if __name__ == "__main__":
     # Load UI from JSON file
-    ui_loader = UiLoader("./designs/example.json")
+    ui_loader = UiLoader("./designs/media_playback_example.json")
     ui_loader.initialize_screen()
     ui_loader.parse_ui()
     root_widget = ui_loader.get_root_widget()
