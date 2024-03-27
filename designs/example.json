@@ -1,8 +1,8 @@
 {
     "ui": {
         "window": {
-            "width": 480,
-            "height": 320,
+            "width": 600,
+            "height": 440,
             "title": "My Application"
         },
         "root": {
@@ -60,6 +60,8 @@
         "styles": {
             "mainContainerStyle": {
                 "bg_color": "#FFFFFF",
+                "width": 400,
+                "height": 400,
                 "radius": 5,
                 "border_width": 2,
                 "border_color": "#000000",

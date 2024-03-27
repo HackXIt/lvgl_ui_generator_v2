@@ -42,7 +42,7 @@ class UiLoader:
                 child_widget.set_parent(widget)
         return widget
 
-    def create_widget(self, element):
+    def create_widget(self, element) -> lv.obj | lv.button | lv.label | lv.image | lv.line | lv.bar | lv.slider | lv.switch | lv.checkbox | lv.roller | lv.dropdown | lv.textarea | lv.chart:
         widget = None
         widget_type = element["type"]
         if widget_type not in self.valid_types:
@@ -58,7 +58,7 @@ class UiLoader:
             widget = lv.label(lv.screen_active())
             widget.set_text(element["text"]) if "text" in element else widget.set_text('Label')
         elif widget_type == 'image':
-            widget = lv.img(lv.screen_active())
+            widget = lv.image(lv.screen_active())
             # widget.set_src(lv.SYMBOL.OK)
         elif widget_type == 'line':
             widget = lv.line(lv.screen_active())
