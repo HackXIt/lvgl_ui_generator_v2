@@ -48,7 +48,7 @@
                             "type": "random",
                             "count": 6,
                             "parent_id": "contentArea",
-                            "options": [
+                            "widget_list": [
                                 "switch",
                                 "button",
                                 "slider"

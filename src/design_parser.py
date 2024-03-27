@@ -54,6 +54,8 @@ class UiLoader:
             raise ValueError(f"Invalid widget type: {widget_type}, valid types are: {self.valid_types}")
         if widget_type == 'container':
             widget = self.create_container(element)
+        elif widget_type == "random":
+            widget = self.create_random_widget(element)
         elif widget_type == 'arc':
             widget = self.create_arc(element)
         elif widget_type == 'bar':
@@ -112,8 +114,6 @@ class UiLoader:
             widget = self.create_tileview(element)
         elif widget_type == 'window':
             widget = self.create_window(element)
-        elif widget_type == "random":
-            widget = self.create_random_widget(element)
         if widget == None:
             raise ValueError(f"Failed to create widget: {element}")
         # Create a unique ID for the widget if it wasn't provided
@@ -176,17 +176,18 @@ class UiLoader:
     
     def create_random_widget(self, element):
         # FIXME Placement of random widget is not handled properly (inside grid layout)
-        if "parent_id" not in element:
-            raise ValueError(f"Random widget must have parent_id: {element}")
-        if "count" not in element:
-            raise ValueError(f"Random widget must have count: {element}")
-        if "count" in element:
-            for i in range(element["count"]):
-                element["type"] = random.choice(element["options"])
-                widget = self.create_widget(element)
-                widget.set_parent(self.widgets[element["parent_id"]])
-                if "style" in element:
-                    self.apply_style(widget, element["style"])
+        if "parent_id" not in element or type(element["parent_id"]) is not str:
+            raise ValueError(f"Random widget must have 'parent_id' of type str: {element}")
+        if "count" not in element or type(element["count"]) is not int:
+            raise ValueError(f"Random widget must have 'count' of type int: {element}")
+        if "widget_list" not in element or type(element["widget_list"]) is not list:
+            raise ValueError(f"Random widget must have 'widget_list' of type list: {element}")
+        for i in range(element["count"]):
+            element["type"] = random.choice(element["widget_list"])
+            widget = self.create_widget(element)
+            widget.set_parent(self.widgets[element["parent_id"]])
+            if "style" in element:
+                self.apply_style(widget, element["style"])
         return widget
 
 # NOTE ------------ WIDGET CREATION METHODS ------------

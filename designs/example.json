@@ -35,7 +35,8 @@
                         {
                             "type": "random",
                             "count": 3,
-                            "options": [
+                            "parent_id": "mainContent",
+                            "widget_list": [
                                 "label",
                                 "button",
                                 "slider"
