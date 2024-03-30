@@ -463,7 +463,7 @@ class UiLoader:
         return widget
 
     def create_spinbox(self, element) -> lv.spinbox:
-        # TODO Implement spinbox widget
+        # NOTE Spinbox without buttons kinda sucks, should add default buttons
         widget = lv.spinbox(lv.screen_active())
         if "options" in element:
             range_min = element["options"].get("range_min", 0)
@@ -489,7 +489,6 @@ class UiLoader:
         return widget
 
     def create_switch(self, element) -> lv.switch:
-        # TODO Implement switch widget
         widget = lv.switch(lv.screen_active())
         if "options" in element:
             state = element["options"].get("state", False)
@@ -500,7 +499,6 @@ class UiLoader:
         return widget
     
     def create_table(self, element) -> lv.table:
-        # TODO Implement table widget
         widget = lv.table(lv.screen_active())
         if "options" in element:
             col_cnt = element["options"].get("column_count", 1)
@@ -518,7 +516,6 @@ class UiLoader:
         return widget
 
     def create_textarea(self, element) -> lv.textarea:
-        # TODO Implement textarea widget
         widget = lv.textarea(lv.screen_active())
         if "options" in element:
             text = element["options"].get("text", str([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
