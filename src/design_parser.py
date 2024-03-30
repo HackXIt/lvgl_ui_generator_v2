@@ -203,6 +203,7 @@ class UiLoader:
         return widget
 
 # NOTE ------------ WIDGET CREATION METHODS ------------
+# TODO Should update the JSON tree with all randomly created values to export the UI back to JSON again
 
     def create_arc(self, element) -> lv.arc:
         widget = lv.arc(lv.screen_active())
