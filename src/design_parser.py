@@ -243,13 +243,20 @@ class UiLoader:
     
     def create_button(self, element) -> lv.button:
         widget = lv.button(lv.screen_active())
-        label = lv.label(widget) # FIXME Label of button currently ignores style properties (uses defaults)
-        label.set_parent(widget)
         if "options" in element:
-            text = element["options"].get("text", "".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))]))
+            # FIXME when both text and symbol are provided, they will overlap, but should be placed side by side
+            if "text" in element["options"]:
+                label = lv.label(widget) # FIXME Label of button currently ignores style properties (uses defaults)
+                label.set_parent(widget)
+                label.set_text(element["options"]["text"])
+            if "symbol" in element["options"]:
+                symbol = element["options"]["symbol"]
+                if hasattr(lv.SYMBOL, symbol.upper()):
+                    widget.set_style_bg_image_src(getattr(lv.SYMBOL, symbol.upper()), 0)
         else:
-            text = "".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-        label.set_text(text)
+            label = lv.label(widget)
+            label.set_parent(widget)
+            label.set_text("".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))]))
         return widget
     
     def create_buttonmatrix(self, element) -> lv.buttonmatrix:
