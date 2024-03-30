@@ -420,7 +420,7 @@ class UiLoader:
             major_range = element["options"].get("major_range", random.randint(1, 100))
             minor_range = element["options"].get("minor_range", random.randint(1, major_range))
             sections = element["options"].get("sections", random.randint(1, 10))
-            default_labels = [x for x in range(sections) for _ in range(random.randint(1, 10)) for c in ascii_letters]
+            default_labels = [random.choice(ascii_letters) for _ in range(sections)]
             labels = element["options"].get("labels", default_labels)
             widget.set_mode(scale_mode)
             widget.set_range(minor_range, major_range)
