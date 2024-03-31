@@ -371,7 +371,6 @@ class UiLoader:
         return widget
     
     def create_checkbox(self, element) -> lv.checkbox:
-        # TODO Implement checkbox widget
         widget = lv.checkbox(lv.screen_active())
         if "options" in element:
             state = element["options"].get("state", "disabled")
@@ -417,7 +416,6 @@ class UiLoader:
         return widget
     
     def create_led(self, element) -> lv.led:
-        # TODO Implement led widget
         widget = lv.led(lv.screen_active())
         if "options" in element:
             brightness = element["options"].get("brightness", 100)
@@ -463,7 +461,6 @@ class UiLoader:
         return widget
     
     def create_scale(self, element) -> lv.scale:
-        # TODO Implement scale widget
         widget = lv.scale(lv.screen_active())
         if "options" in element:
             mode = element["options"].get("mode", "horizontal_bottom")
@@ -510,7 +507,6 @@ class UiLoader:
         return widget
 
     def create_spinbox(self, element) -> lv.spinbox:
-        # NOTE Spinbox without buttons kinda sucks, should add default buttons
         widget = lv.spinbox(lv.screen_active())
         if "options" in element:
             range_min = element["options"].get("range_min", 0)
@@ -685,7 +681,7 @@ class UiLoader:
 
 if __name__ == "__main__":
     # Load UI from JSON file
-    ui_loader = UiLoader("./designs/smart_home2.json")
+    ui_loader = UiLoader("./designs/ui_attempt1.json")
     ui_loader.initialize_screen()
     ui_loader.parse_ui()
     root_widget = ui_loader.get_root_widget()

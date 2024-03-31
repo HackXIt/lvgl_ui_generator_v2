@@ -5,6 +5,7 @@
             "height": 320
         },
         "root": {
+            "id": "root",
             "type": "container",
             "options": {
                 "layout": "flex",

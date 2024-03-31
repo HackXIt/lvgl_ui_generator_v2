@@ -8,11 +8,19 @@
         "root": {
             "id": "mainContainer",
             "type": "container",
+            "options": {
+                "layout": "flex",
+                "flow": "column"
+            },
             "style": "mainContainerStyle",
             "children": [
                 {
                     "id": "appBar",
                     "type": "container",
+                    "options": {
+                        "layout": "flex",
+                        "flow": "row"
+                    },
                     "style": "appBarStyle",
                     "children": [
                         {
@@ -23,21 +31,25 @@
                         {
                             "type": "button",
                             "text": "Settings",
-                            "style": "buttonStyle"
+                            "style": "appBarSettingsButtonStyle"
                         }
                     ]
                 },
                 {
                     "id": "mainContent",
                     "type": "container",
+                    "options": {
+                        "layout": "flex",
+                        "flow": "row_wrap"
+                    },
                     "style": "mainContentStyle",
                     "children": [
                         {
                             "type": "random",
-                            "count": 3,
+                            "count": 8,
                             "parent_id": "mainContent",
                             "widget_list": [
-                                "label",
+                                "switch",
                                 "button",
                                 "slider"
                             ],
@@ -48,6 +60,9 @@
                 {
                     "id": "statusBar",
                     "type": "container",
+                    "options": {
+                        "layout": "none"
+                    },
                     "style": "statusBarStyle",
                     "children": [
                         {
@@ -62,32 +77,37 @@
         "styles": {
             "mainContainerStyle": {
                 "bg_color": "#FFFFFF",
-                "width": 400,
-                "height": 400,
-                "radius": 5,
+                "width": 600,
+                "height": 440,
                 "border_width": 2,
                 "border_color": "#000000",
                 "pad_all": 10
             },
             "appBarStyle": {
                 "bg_color": "#333333",
-                "pad_all": 5
+                "pad_all": 5,
+                "width": 400,
+                "height": 50
             },
             "titleStyle": {
                 "text_color": "#FF0000",
                 "text_font": "FONT_DEFAULT",
                 "text_letter_space": 2
             },
-            "buttonStyle": {
+            "appBarSettingsButtonStyle": {
                 "bg_color": "#555555",
                 "text_color": "#FFFFFF",
                 "radius": 3,
                 "border_width": 1,
-                "border_color": "#AAAAAA"
+                "border_color": "#AAAAAA",
+                "align": "right"
             },
             "mainContentStyle": {
                 "bg_color": "#EEEEEE",
-                "pad_all": 15
+                "pad_all": 15,
+                "width": 400,
+                "height": 200,
+                "y": 60
             },
             "randomWidgetStyle": {
                 "bg_color": "#CCCCCC",
@@ -97,7 +117,10 @@
             "statusBarStyle": {
                 "bg_color": "#222222",
                 "text_color": "#FFFFFF",
-                "pad_hor": 10
+                "pad_hor": 10,
+                "width": 0.9,
+                "height": 50,
+                "y": 350
             },
             "statusLabelStyle": {
                 "text_color": "#FFFFFF",
