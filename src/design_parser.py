@@ -56,7 +56,12 @@ class UiLoader:
         if "children" in element:
             for child in element["children"]:
                 child_widget = self.parse_element(child)
+                if child["type"] == "random": # NOTE Random widget is a special case and places itself
+                    continue
                 child_widget.set_parent(widget)
+                if "grid" in element["layout_type"]:
+                    self.place_widget_in_grid(child_widget, child)
+                    
         if "style" in element:
             self.apply_style(widget, element["style"])
         return widget
@@ -134,16 +139,21 @@ class UiLoader:
         if "id" not in element:
             # Count types of the widget
             count = sum([1 for w in self.widgets.values() if type(w) == type(widget)])
-            element["id"] = f"{widget_type}_{count}"
-        if element["id"] in self.widgets:
+            id = f"{widget_type}_{count}"
+            self.widgets[id] = widget
+            print(f"Created widget '{id}': {element}")
+        elif element["id"] in self.widgets:
             raise ValueError(f"Widget with ID '{element['id']}' already exists. IDs must be unique.")
-        self.widgets[element["id"]] = widget
-        print(f"Created widget '{element['id']}': {element}")
+        else:
+            self.widgets[element["id"]] = widget
+            print(f"Created widget '{element['id']}': {element}")
         return widget
 
 # NOTE ------------ SPECIAL CREATION METHODS ------------
 
     def create_container(self, element) -> lv.obj:
+        if "id" not in element or type(element["id"]) is not str:
+            raise ValueError(f"Container widget must have 'id' of type str: {element}")
         if "options" not in element or type(element["options"]) is not dict:
             raise ValueError(f"Container widget must have 'options' of type dict: {element}")
         options = element["options"]
@@ -153,10 +163,13 @@ class UiLoader:
         layout = options["layout"]
         if layout == "none":
             container.set_layout(lv.LAYOUT.NONE)
+            element["layout_type"] = "none"
         elif layout == "grid":
             self.configure_grid_layout(container, options)
+            element["layout_type"] = "grid"
         elif layout == "flex":
             self.configure_flex_layout(container, options)
+            element["layout_type"] = "flex"
         return container
     
     def configure_flex_layout(self, container, options):
@@ -177,17 +190,38 @@ class UiLoader:
         elif flow == "column_reverse":
             container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
 
-    def configure_grid_layout(self, container, options):
+    def configure_grid_layout(self, container: lv.obj, options):
         if "grid_dsc" not in options or type(options["grid_dsc"]) is not dict:
             raise ValueError(f"Grid layout must have 'grid_dsc' of type dict: {options}")
         container.set_layout(lv.LAYOUT.GRID)
         # TODO Need to properly handle grid placements of children with grid layout
         if "col_dsc" not in options["grid_dsc"] or type(options["grid_dsc"]["col_dsc"]) is not list or "row_dsc" not in options["grid_dsc"] or type(options["grid_dsc"]["row_dsc"]) is not list:
             raise ValueError(f"grid_dsc must have 'col_dsc' and 'row_dsc' of type list: {options['grid_dsc']}")
-        container.set_grid_dsc_array(options["grid_dsc"]["col_dsc"], options["grid_dsc"]["row_dsc"])
-    
+        col_dsc = []
+        for col in options["grid_dsc"]["col_dsc"]:
+            if type(col) is int:
+                col_dsc.append(col)
+            elif type(col) is str:
+                if col.endswith("fr"):
+                    col_dsc.append(lv.grid_fr(int(col.strip("fr"))))
+                elif col == "content":
+                    col_dsc.append(lv.GRID_CONTENT)
+                else:
+                    raise ValueError(f"Unsupported column description: {col}. Must be an integer, '#fr' value or 'content'.")
+        row_dsc = []
+        for row in options["grid_dsc"]["row_dsc"]:
+            if type(row) is int:
+                row_dsc.append(row)
+            elif type(row) is str:
+                if row.endswith("fr"):
+                    row_dsc.append(lv.grid_fr(int(row.strip("fr"))))
+                elif row == "content":
+                    row_dsc.append(lv.GRID_CONTENT)
+                else:
+                    raise ValueError(f"Unsupported row description: {row}. Must be an integer, '#fr' value or 'content'.")
+        container.set_grid_dsc_array(col_dsc, row_dsc)
+
     def create_random_widget(self, element):
-        # FIXME Placement of random widget is not handled properly (inside grid layout)
         if "parent_id" not in element or type(element["parent_id"]) is not str:
             raise ValueError(f"Random widget must have 'parent_id' of type str: {element}")
         if "count" not in element or type(element["count"]) is not int:
@@ -200,7 +234,29 @@ class UiLoader:
             widget.set_parent(self.widgets[element["parent_id"]])
             if "style" in element:
                 self.apply_style(widget, element["style"])
+            if "placement" in element:
+                # NOTE Assuming parent is grid layout if "placement" is present
+                # FIXME placement should be adjusted for each created random widget, as they can't all be in the same spot
+                self.place_widget_in_grid(widget, element)
         return widget
+    
+    def place_widget_in_grid(self, widget: lv.obj, child_element):
+        if "placement" not in child_element or type(child_element["placement"]) is not dict:
+            raise ValueError(f"Child element of grid layout must have 'placement' property of type 'dict': {child_element}")
+        # placement options: column_align: Unknown, col_pos: int, col_span: int, row_align: Unknown, row_pos: int, row_span: int
+        if "col_pos" not in child_element["placement"] or type(child_element["placement"]["col_pos"]) is not int:
+            raise ValueError(f"Child element of grid layout must have 'col_pos' property of type 'int': {child_element}")
+        if "col_span" not in child_element["placement"] or type(child_element["placement"]["col_span"]) is not int:
+            raise ValueError(f"Child element of grid layout must have 'col_span' property of type 'int': {child_element}")
+        if "row_pos" not in child_element["placement"] or type(child_element["placement"]["row_pos"]) is not int:
+            raise ValueError(f"Child element of grid layout must have 'row_pos' property of type 'int': {child_element}")
+        if "row_span" not in child_element["placement"] or type(child_element["placement"]["row_span"]) is not int: 
+            raise ValueError(f"Child element of grid layout must have 'row_span' property of type 'int': {child_element}")
+        row_align = child_element["placement"].get("row_align", "space_evenly")
+        col_align = child_element["placement"].get("col_align", "space_evenly")
+        row_align = getattr(lv.GRID_ALIGN, row_align.upper(), lv.GRID_ALIGN.SPACE_EVENLY)
+        col_align = getattr(lv.GRID_ALIGN, col_align.upper(), lv.GRID_ALIGN.SPACE_EVENLY)
+        widget.set_grid_cell(col_align, child_element["placement"]["col_pos"], child_element["placement"]["col_span"], row_align, child_element["placement"]["row_pos"], child_element["placement"]["row_span"])
 
 # NOTE ------------ WIDGET CREATION METHODS ------------
 # TODO Should update the JSON tree with all randomly created values to export the UI back to JSON again
@@ -307,16 +363,6 @@ class UiLoader:
     def create_chart(self, element) -> lv.chart:
         # TODO Implement chart widget (also tough to implement)
         widget = lv.chart(lv.screen_active())
-        # if "options" in element:
-        #     chart_type = getattr(lv.chart, element["options"].get("type", "TYPE.LINE"))
-        #     point_count = element["options"].get("point_count", 10)
-        #     series_options = element["options"].get("series", [])
-        #     widget.set_type(chart_type)
-        #     widget.set_point_count(point_count)
-        #     for series_option in series_options:
-        #         series = widget.add_series(lv.color_hex(self.convert_value("color", series_option["color"]))))
-        #         points = series_option.get("points", [])
-        #         widget.set_points(series, points)
         return widget
     
     def create_canvas(self, element) -> lv.canvas:
@@ -639,7 +685,7 @@ class UiLoader:
 
 if __name__ == "__main__":
     # Load UI from JSON file
-    ui_loader = UiLoader("./designs/test_widget.json")
+    ui_loader = UiLoader("./designs/smart_home2.json")
     ui_loader.initialize_screen()
     ui_loader.parse_ui()
     root_widget = ui_loader.get_root_widget()
