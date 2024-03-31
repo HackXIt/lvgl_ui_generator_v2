@@ -1,0 +1,127 @@
+{
+    "ui": {
+        "window": {
+            "width": 480,
+            "height": 320
+        },
+        "root": {
+            "type": "container",
+            "id": "root",
+            "options": {
+                "layout": "grid",
+                "grid_dsc": {
+                    "col_dsc": [
+                        "content",
+                        "content"
+                    ],
+                    "row_dsc": [
+                        "content",
+                        "content",
+                        "content"
+                    ]
+                }
+            },
+            "style": "root_container_style",
+            "children": [
+                {
+                    "type": "label",
+                    "options": {
+                        "text": "Home Automation"
+                    },
+                    "style": "title_style",
+                    "placement": {
+                        "col_pos": 0,
+                        "row_pos": 0,
+                        "col_span": 2,
+                        "row_span": 1
+                    }
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Lights"
+                    },
+                    "style": "button_style",
+                    "placement": {
+                        "col_pos": 0,
+                        "row_pos": 1,
+                        "col_span": 1,
+                        "row_span": 1
+                    }
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Temperature"
+                    },
+                    "style": "button_style",
+                    "placement": {
+                        "col_pos": 1,
+                        "row_pos": 1,
+                        "col_span": 1,
+                        "row_span": 1
+                    }
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Locks"
+                    },
+                    "style": "button_style",
+                    "placement": {
+                        "col_pos": 0,
+                        "row_pos": 2,
+                        "col_span": 2,
+                        "row_span": 1
+                    }
+                },
+                {
+                    "type": "random",
+                    "parent_id": "root",
+                    "count": 3,
+                    "widget_list": [
+                        "led",
+                        "switch",
+                        "label"
+                    ],
+                    "placement": {
+                        "col_pos": 1,
+                        "row_pos": 2,
+                        "col_span": 1,
+                        "row_span": 1
+                    },
+                    "style": "widget_style"
+                }
+            ]
+        },
+        "styles": {
+            "root_container_style": {
+                "width": 480,
+                "height": 320
+            },
+            "title_style": {
+                "text_color": "#FFFFFF",
+                "text_font": 22,
+                "bg_color": "#333333",
+                "height": 40,
+                "margin_bottom": 10,
+                "align": "center"
+            },
+            "button_style": {
+                "bg_color": "#4CAF50",
+                "text_color": "#FFFFFF",
+                "text_font": 18,
+                "border_width": 1,
+                "border_color": "#FFFFFF",
+                "radius": 5,
+                "padding": 10
+            },
+            "widget_style": {
+                "bg_color": "#FFFFFF",
+                "radius": 5,
+                "border_width": 1,
+                "border_color": "#DDDDDD"
+            }
+        }
+    }
+}

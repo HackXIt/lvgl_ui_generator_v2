@@ -1,0 +1,68 @@
+{
+    "ui": {
+        "window": {
+            "width": 480,
+            "height": 320
+        },
+        "root": {
+            "type": "container",
+            "options": {
+                "layout": "flex",
+                "flow": "column"
+            },
+            "style": "root_container_style",
+            "children": [
+                {
+                    "type": "label",
+                    "options": {
+                        "text": "Emergency Call"
+                    },
+                    "style": "title_style"
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Call 911"
+                    },
+                    "style": "emergency_button_style"
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Call Fire Dept."
+                    },
+                    "style": "emergency_button_style"
+                },
+                {
+                    "type": "button",
+                    "options": {
+                        "text": "Call Ambulance"
+                    },
+                    "style": "emergency_button_style"
+                }
+            ]
+        },
+        "styles": {
+            "root_container_style": {
+                "width": 480,
+                "height": 320,
+                "pad_top": 20,
+                "pad_bottom": 20,
+                "margin": 10
+            },
+            "title_style": {
+                "text_color": "#000000",
+                "text_font": 24,
+                "height": 50
+            },
+            "emergency_button_style": {
+                "width": 350,
+                "height": 50,
+                "bg_color": "#FF5722",
+                "text_color": "#FFFFFF",
+                "text_font": 20,
+                "margin_top": 10
+            }
+        }
+    }
+}

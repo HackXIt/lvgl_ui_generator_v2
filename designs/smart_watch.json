@@ -1,0 +1,70 @@
+{
+    "ui": {
+        "window": {
+            "width": 240,
+            "height": 240
+        },
+        "root": {
+            "id": "root",
+            "type": "container",
+            "options": {
+                "layout": "flex",
+                "flow": "column_wrap"
+            },
+            "style": "root_container_style",
+            "children": [
+                {
+                    "type": "label",
+                    "options": {
+                        "text": "12:45 PM"
+                    },
+                    "style": "time_style"
+                },
+                {
+                    "type": "label",
+                    "options": {
+                        "text": "Wed, May 5"
+                    },
+                    "style": "date_style"
+                },
+                {
+                    "type": "random",
+                    "parent_id": "root",
+                    "count": 3,
+                    "widget_list": [
+                        "bar",
+                        "button",
+                        "label"
+                    ],
+                    "style": "widget_style"
+                }
+            ]
+        },
+        "styles": {
+            "root_container_style": {
+                "width": 240,
+                "height": 240
+            },
+            "time_style": {
+                "text_color": "#000000",
+                "text_font": 20,
+                "align": "center",
+                "height": 30
+            },
+            "date_style": {
+                "text_color": "#555555",
+                "text_font": 14,
+                "align": "center",
+                "height": 20
+            },
+            "widget_style": {
+                "bg_color": "#FFFFFF",
+                "text_color": "#000000",
+                "radius": 5,
+                "border_width": 1,
+                "border_color": "#DDDDDD",
+                "margin": 5
+            }
+        }
+    }
+}
