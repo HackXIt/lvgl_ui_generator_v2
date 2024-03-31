@@ -4,6 +4,7 @@ import random
 # NOTE typing not available in micropython and making it work is difficult
 # from typing import List, Tuple, Self
 import time
+from ui import UI
 
 ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -135,3 +136,12 @@ class RandomUI:
             self.widgets['count'] = len(self.widgets['objects'])
             print(self.widgets)
         return self
+    
+    def get_root_widget(self):
+        return self.container
+    
+    def get_ui(self) -> UI:
+        ui = UI()
+        ui['count'] = self.widgets['count']
+        ui['objects'] = self.widgets['objects']
+        return ui

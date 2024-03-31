@@ -2,6 +2,7 @@ from display_driver_utils import driver
 import lvgl as lv
 import json
 import random
+from ui import UI
 
 ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -678,6 +679,23 @@ class UiLoader:
 
     def get_root_widget(self):
         return self.root_widget
+    
+    def get_ui(self) -> UI:
+        ui = UI()
+        ui["count"] = len(self.widgets)
+        lv.screen_load(self.root_widget)
+        self.root_widget.update_layout()
+        for id, widget in self.widgets.items():
+            if type(widget) is lv.obj:
+                continue # Skip container widgets
+            widget_info = {}
+            widget_info["x"] = widget.get_x()
+            widget_info["y"] = widget.get_y()
+            widget_info["width"] = widget.get_width()
+            widget_info["height"] = widget.get_height()
+            widget_info["class"] = widget.__class__.__name__
+            ui["objects"].append(widget_info)
+        return ui
 
 if __name__ == "__main__":
     # Load UI from JSON file
