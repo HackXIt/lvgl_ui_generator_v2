@@ -2,6 +2,7 @@ import cli
 from screenshot import take_screenshot
 from yolo import write_yolo_normalized, write_yolo_pixel
 from random_ui import RandomUI
+from design_parser import UiLoader
 
 ui = None
 # WINDOW_WIDTH = 800
@@ -10,10 +11,26 @@ ui = None
 def main():
     global ui
     args = cli.process_arguments()
-    ui = RandomUI(args.width, args.height, args.widget_count, args.widget_types, args.output_file, args.layout)
-    print(ui.width, ui.height, ui.widget_count, ui.widget_types, ui.output_file, ui.layout)
-    ui.create_random_ui()
-    take_screenshot(ui.container, args.output_file)
+    root_widget = None
+    if args.mode == 'design':
+        print('Design mode')
+        loader = UiLoader(args.file)
+        loader.initialize_screen()
+        loader.parse_ui()
+        ui = loader.get_ui()
+        root_widget = loader.get_root_widget()
+    elif args.mode == 'generator':
+        print('Generator mode')
+        generator = RandomUI(args.width, args.height, args.widget_count, args.widget_types, args.output_file, args.layout)
+        print(f"Width: {generator.width}, Height: {generator.height}, Widget Count: {generator.widget_count}, Widget Types: {generator.widget_types}, Output File: {generator.output_file}, Layout: {generator.layout}")
+        generator.create_random_ui()
+        ui = generator.get_ui()
+        root_widget = generator.get_root_widget()
+    if ui is None:
+        raise ValueError('UI object is None')
+    if root_widget is None:
+        raise ValueError('Root widget is None')
+    take_screenshot(root_widget, args.output_file)
     if args.normalize:
         write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=int(args.width), height=int(args.height))
     else:

@@ -311,7 +311,7 @@ def bgr_to_rgb(data):
         data[i], data[i+2] = data[i+2], data[i]  # Swap the B and R values
     return data
 
-def take_screenshot(container, output_file, quality:int = 100):
+def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
     snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
     data_size = snapshot.data_size
     buffer = snapshot.data.__dereference__(data_size)
