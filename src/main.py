@@ -19,6 +19,8 @@ def main():
         loader.parse_ui()
         ui = loader.get_ui()
         root_widget = loader.get_root_widget()
+        ui["width"] = loader.width
+        ui["height"] = loader.height
     elif args.mode == 'generator':
         print('Generator mode')
         generator = RandomUI(args.width, args.height, args.widget_count, args.widget_types, args.output_file, args.layout)
@@ -26,13 +28,15 @@ def main():
         generator.create_random_ui()
         ui = generator.get_ui()
         root_widget = generator.get_root_widget()
+        ui["width"] = args.width
+        ui["height"] = args.height
     if ui is None:
         raise ValueError('UI object is None')
     if root_widget is None:
         raise ValueError('Root widget is None')
     take_screenshot(root_widget, args.output_file)
     if args.normalize:
-        write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=int(args.width), height=int(args.height))
+        write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=ui['width'], height=ui['height'])
     else:
         write_yolo_pixel(ui, output_file=args.output_file.replace('.jpg', '.txt'))
 
