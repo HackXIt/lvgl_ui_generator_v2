@@ -34,9 +34,9 @@ def process_arguments():
 
     if args.mode == 'design':
         return process_design_arguments(parser, args.usage)
-    elif args.mode == 'generator':
+    elif args.mode == 'random':
         return process_generator_arguments(parser, args.usage)
-    raise ValueError('Invalid mode argument provided. Please provide either "design" or "generator" as the mode.')
+    raise ValueError('Invalid mode argument provided. Please provide either "design" or "random" as the mode.')
 
 if __name__ == "__main__":
     args = process_arguments()
