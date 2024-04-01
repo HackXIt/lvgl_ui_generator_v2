@@ -685,6 +685,7 @@ class UiLoader:
         ui["count"] = len(self.widgets)
         lv.screen_load(self.root_widget)
         self.root_widget.update_layout()
+        # FIXME coordinates are not accurate/relative to the whole window, only relative to parent container (which is incorrect for nested containers)
         for id, widget in self.widgets.items():
             if type(widget) is lv.obj:
                 continue # Skip container widgets
@@ -694,6 +695,7 @@ class UiLoader:
             widget_info["width"] = widget.get_width()
             widget_info["height"] = widget.get_height()
             widget_info["class"] = widget.__class__.__name__
+            print(f"Widget {id}: {widget_info}")
             ui["objects"].append(widget_info)
         return ui
 
