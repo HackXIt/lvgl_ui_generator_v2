@@ -23,6 +23,7 @@ class RandomUI:
         # self.display_driver.init()
         self.objects = []
         self.widgets = {'count': 0, 'objects': []}
+        self.type_count = {}
         random.seed(int(time.time() * 1000000))
         driver(width=self.width, height=self.height)
 
@@ -82,12 +83,12 @@ class RandomUI:
             # widget.set_point_count(ser2, 10)
             # widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
         widget.set_parent(self.container)
-        type_count = [widget['object'] for widget in self.widgets['objects'] if widget['type'] == widget_type]
+        self.type_count[widget_type] = self.type_count.get(widget_type, 0) + 1
         self.objects.append(widget)
         widget_info = {
             'type': widget_type,
             'class': widget.__class__.__name__,
-            'index': len(type_count)
+            'index': self.type_count[widget_type]
         }
         return widget_info, widget # type: ignore
 
@@ -126,6 +127,7 @@ class RandomUI:
                 lv.screen_load(self.container)
                 self.container.update_layout()
                 # self.container.update_layout()
+                # NOTE Coordinates would not be accurate if another container would be nested inside the main container
                 widget_info['x'] = widget.get_x()
                 widget_info['y'] = widget.get_y()
                 widget_info['width'] = widget.get_width()
