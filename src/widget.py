@@ -325,6 +325,7 @@ widget_mapping = {
     "button": create_button,
     "buttonmatrix": create_buttonmatrix,
     "calendar": create_calendar,
+    "canvas": create_canvas,
     "chart": create_chart,
     "checkbox": create_checkbox,
     "dropdown": create_dropdown,
