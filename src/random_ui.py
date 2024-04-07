@@ -32,6 +32,39 @@ class RandomUI:
 
     def create_random_layout_grid(self):
         ...
+    
+    def create_random_layout_none(self):
+        print(f'{self.widget_count}: {type(self.widget_count)}')
+        for i in range(self.widget_count):
+            widget_type = random.choice(self.widget_types)
+            widget_info, widget = self.create_random_widget(widget_type)
+            lv.screen_load(self.container)
+            self.container.update_layout()
+            print(f'width: {widget.get_width()}, height: {widget.get_height()}')
+            max_x = self.width - widget.get_width()
+            max_y = self.height - widget.get_height()
+            if max_x < 0:
+                max_x = 0
+            if max_y < 0:
+                max_y = 0
+            print(f'max_x: {max_x}, max_y: {max_y}')
+            x = random.randint(0, max_x)
+            y = random.randint(0, max_y)
+            print(f'x: {x}, y: {y}')
+            widget.set_pos(x, y)
+            lv.screen_load(self.container)
+            self.container.update_layout()
+            # self.container.update_layout()
+            # NOTE Coordinates would not be accurate if another container would be nested inside the main container
+            widget_info['x'] = widget.get_x()
+            widget_info['y'] = widget.get_y()
+            widget_info['width'] = widget.get_width()
+            widget_info['height'] = widget.get_height()
+            self.widgets['objects'].append(widget_info)
+            self.objects.append(widget)
+            print(f'[{i}]: {widget_info}')
+        self.widgets['count'] = len(self.widgets['objects'])
+        print(self.widgets)
 
     def create_random_widget(self, widget_type: str) -> tuple[dict, lv.obj]:
         if widget_type not in widget_types:
@@ -53,13 +86,6 @@ class RandomUI:
         # Create a screen
         self.container = lv.obj(lv.screen_active())
         self.container.set_size(self.width, self.height)
-        # lv.scr_load(scr)
-
-        # Create a container
-        # self.container = lv.obj()
-        # self.container.set_parent(self.scr)
-        # self.container.set_size(self.width, self.height)
-        # self.container.align(lv.ALIGN.CENTER, 0, 0)
 
         # Create a layout
         if self.layout == 'flex':
@@ -67,31 +93,7 @@ class RandomUI:
         elif self.layout == 'grid':
             self.create_random_layout_grid()
         elif self.layout == 'none':
-            print(f'{self.widget_count}: {type(self.widget_count)}')
-            for i in range(self.widget_count):
-                widget_type = random.choice(self.widget_types)
-                widget_info, widget = self.create_random_widget(widget_type)
-                print(f'width: {widget.get_width()}, height: {widget.get_height()}')
-                max_x = self.width - widget.get_width()
-                max_y = self.height - widget.get_height()
-                print(f'max_x: {max_x}, max_y: {max_y}')
-                x = random.randint(0, max_x)
-                y = random.randint(0, max_y)
-                print(f'x: {x}, y: {y}')
-                widget.set_pos(x, y)
-                lv.screen_load(self.container)
-                self.container.update_layout()
-                # self.container.update_layout()
-                # NOTE Coordinates would not be accurate if another container would be nested inside the main container
-                widget_info['x'] = widget.get_x()
-                widget_info['y'] = widget.get_y()
-                widget_info['width'] = widget.get_width()
-                widget_info['height'] = widget.get_height()
-                self.widgets['objects'].append(widget_info)
-                self.objects.append(widget)
-                print(f'[{i}]: {widget_info}')
-            self.widgets['count'] = len(self.widgets['objects'])
-            print(self.widgets)
+            self.create_random_layout_none()
         return self
     
     def get_root_widget(self):
