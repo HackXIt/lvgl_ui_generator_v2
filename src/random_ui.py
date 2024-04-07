@@ -5,8 +5,8 @@ import random
 # from typing import List, Tuple, Self
 import time
 from ui import UI
-
-ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+from widget import *
+from global_definitions import widget_types, ascii_letters
 
 class RandomUI:
     layout_options = ['flex', 'grid', 'none']
@@ -34,54 +34,9 @@ class RandomUI:
         ...
 
     def create_random_widget(self, widget_type: str) -> tuple[dict, lv.obj]:
-        if widget_type == 'button':
-            widget = lv.button(self.container)
-            label = lv.label(widget)
-            label.set_parent(widget)
-            label.set_text('Button')
-        elif widget_type == 'label':
-            widget = lv.label(self.container)
-            widget.set_text('Label')
-        elif widget_type == 'image':
-            widget = lv.image(self.container)
-            widget.set_src(lv.SYMBOL.OK)
-        elif widget_type == 'line':
-            widget = lv.line(self.container)
-            # widget.set_points([(0, 0), (self.width, self.height)])
-        elif widget_type == 'bar':
-            widget = lv.bar(self.container)
-            widget.set_value(50, lv.ANIM.ON)
-        elif widget_type == 'slider':
-            widget = lv.slider(self.container)
-            widget.set_range(0, 100)
-            widget.set_value(50, lv.ANIM.ON)
-        elif widget_type == 'switch':
-            widget = lv.switch(self.container)
-        elif widget_type == 'checkbox':
-            widget = lv.checkbox(self.container)
-            widget.set_text('Checkbox')
-        elif widget_type == 'roller':
-            widget = lv.roller(self.container)
-            for i in range(random.randint(1, 10)):
-                options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-            widget.set_options(options, lv.roller.MODE.NORMAL) # FIXME expected type 'roller' - ignore?
-        elif widget_type == 'dropdown':
-            widget = lv.dropdown(self.container)
-            for i in range(random.randint(1, 10)):
-                options = '\n'.join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
-            widget.set_options(options)
-        elif widget_type == 'textarea':
-            widget = lv.textarea(self.container)
-            widget.set_text('Textarea')
-        elif widget_type == 'chart':
-            widget = lv.chart(self.container)
-            # ser1 = widget.add_series(lv.color_hex(0x2587FF))
-            # ser2 = widget.add_series(lv.color_hex(0xFF0000))
-            # widget.set_type(ser1, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            # widget.set_type(ser2, lv.chart.TYPE.LINE | lv.chart.TYPE.LINE)
-            # widget.set_point_count(ser1, 10)
-            # widget.set_point_count(ser2, 10)
-            # widget.set_ext_y_array(ser1, [lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER, lv.OPA.COVER])
+        if widget_type not in widget_types:
+            raise ValueError(f'Invalid widget type: {widget_type} (valid options: {",".join(widget_types)})')
+        widget = widget_mapping[widget_type]({})
         widget.set_parent(self.container)
         self.type_count[widget_type] = self.type_count.get(widget_type, 0) + 1
         self.objects.append(widget)
