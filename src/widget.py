@@ -291,8 +291,8 @@ def create_table(element) -> lv.table:
         widget.set_column_count(col_cnt)
         widget.set_row_count(row_cnt)
     else:
-        widget.set_column_count(random.randint(1, 10))
-        widget.set_row_count(random.randint(1, 10))
+        widget.set_column_count(random.randint(1, 3))
+        widget.set_row_count(random.randint(1, 3))
     return widget
 
 def create_tabview(element) -> lv.tabview:
