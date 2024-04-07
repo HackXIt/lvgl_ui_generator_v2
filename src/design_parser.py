@@ -324,6 +324,10 @@ class UiLoader:
             print(f"Widget {id}: {widget_info}")
             ui["objects"].append(widget_info)
         return ui
+    
+    def cleanup(self):
+        for widget in self.widgets.values():
+            widget.delete()
 
 if __name__ == "__main__":
     # Load UI from JSON file

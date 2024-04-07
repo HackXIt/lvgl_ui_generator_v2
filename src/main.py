@@ -39,6 +39,10 @@ def main():
         write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=ui['width'], height=ui['height'])
     else:
         write_yolo_pixel(ui, output_file=args.output_file.replace('.jpg', '.txt'))
+    if args.mode == 'design':
+        loader.cleanup()
+    elif args.mode == 'random':
+        generator.cleanup()
 
 if __name__ == "__main__":
     main()
