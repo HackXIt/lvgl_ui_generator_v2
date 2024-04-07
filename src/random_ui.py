@@ -93,6 +93,7 @@ class RandomUI:
                 print(f'Could not place the widget: {widget_info}')
                 widget.delete()
                 continue
+            self.randomize_style(widget)
             lv.screen_load(self.container)
             self.container.update_layout()
             # self.container.update_layout()
@@ -131,6 +132,43 @@ class RandomUI:
             'index': self.type_count[widget_type]
         }
         return widget_info, widget # type: ignore
+    
+    def randomize_style(self, widget: lv.obj):
+        # Create style object
+        style = lv.style_t()
+        # Choose a random amount of style properties to set
+        # Randomize the chosen style properties, creating property values according to the property type
+        # Apply the style to the widget
+        # List of style properties to randomize
+        properties = [
+            ('set_bg_color', lv.color_make),
+            ('set_border_color', lv.color_make),
+            ('set_border_width', lambda: random.randint(0, 10)),
+            ('set_radius', lambda: random.randint(0, 50)),
+            ('set_shadow_width', lambda: random.randint(0, 15)),
+            ('set_shadow_color', lv.color_make),
+            ('set_text_color', lv.color_make),
+            ('set_line_color', lv.color_make),
+            ('set_line_width', lambda: random.randint(0, 10)),
+            # Add more properties as needed
+        ]
+
+        # Choose a random amount of style properties to set
+        num_props_to_set = random.randint(3, len(properties))
+
+        # Randomly select and set properties
+        for _ in range(num_props_to_set):
+            prop, value_generator = random.choice(properties)
+            if 'color' in prop:
+                # Generate a random color
+                value = lv.color_hex(random.randint(0, 0xFFFFFF))
+            else:
+                # Generate a random value
+                value = value_generator()
+            getattr(style, prop)(value)
+
+        # Apply the style to the widget
+        widget.add_style(style, lv.PART.MAIN)
     
     def get_root_widget(self):
         return self.container
