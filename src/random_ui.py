@@ -96,10 +96,10 @@ class RandomUI:
             self.randomize_style(widget)
             lv.screen_load(self.container)
             self.container.update_layout()
-            # self.container.update_layout()
-            # NOTE Coordinates would not be accurate if another container would be nested inside the main container
-            widget_info['x'] = widget.get_x()
-            widget_info['y'] = widget.get_y()
+            tmp_coords = lv.area_t()
+            widget.get_coords(tmp_coords)
+            widget_info["x"] = (tmp_coords.x1 + tmp_coords.x2) // 2
+            widget_info["y"] = (tmp_coords.y1 + tmp_coords.y2) // 2
             widget_info['width'] = widget.get_width()
             widget_info['height'] = widget.get_height()
             self.widgets['objects'].append(widget_info)
