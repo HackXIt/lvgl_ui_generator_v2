@@ -303,10 +303,10 @@ def create_tabview(element) -> lv.tabview:
 def create_textarea(element) -> lv.textarea:
     widget = lv.textarea(lv.screen_active())
     if "options" in element:
-        text = element["options"].get("text", str([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
+        text = element["options"].get("text", " ".join([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
         widget.set_text(text)
     else:
-        widget.set_text(str([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
+        widget.set_text(" ".join([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
     return widget
 
 def create_tileview(element) -> lv.tileview:
