@@ -2,6 +2,14 @@ import lvgl as lv
 import random
 from global_definitions import ascii_letters
 
+# NOTE ------------ WIDGET HELPER METHODS ------------
+def randomize_state(widget: lv.obj):
+    if hasattr(widget, "set_state"):
+        state = random.choice([lv.STATE.CHECKED, lv.STATE.DISABLED, lv.STATE.FOCUSED, lv.STATE.PRESSED, lv.STATE.HOVERED, lv.STATE.EDITED])
+        widget.set_state(state, True) # Add the state
+    else:
+        raise AttributeError(f"Widget {widget} does not have a 'state' property.")
+
 # NOTE ------------ WIDGET CREATION METHODS ------------
 def create_arc(element) -> lv.arc:
     widget = lv.arc(lv.screen_active())
@@ -102,14 +110,14 @@ def create_calendar(element) -> lv.calendar:
         widget.set_highlighted_dates([highlight], 1)
     return widget
 
-def create_chart(element) -> lv.chart:
-    # TODO Implement chart widget (also tough to implement)
-    widget = lv.chart(lv.screen_active())
-    return widget
-
 def create_canvas(element) -> lv.canvas:
     # TODO Implement canvas widget
     widget = lv.canvas(lv.screen_active())
+    return widget
+
+def create_chart(element) -> lv.chart:
+    # TODO Implement chart widget (also tough to implement)
+    widget = lv.chart(lv.screen_active())
     return widget
 
 def create_checkbox(element) -> lv.checkbox:
