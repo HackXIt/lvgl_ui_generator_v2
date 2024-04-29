@@ -23,7 +23,8 @@ def main():
         ui["height"] = loader.height
     elif args.mode == 'random':
         print('Random mode')
-        generator = RandomUI(args.width, args.height, args.widget_count, args.widget_types, args.output_file, args.layout)
+        random_state = args.random_state if args.random_state else False
+        generator = RandomUI(args.width, args.height, args.widget_count, args.widget_types, args.output_file, args.layout, random_state)
         print(f"Width: {generator.width}, Height: {generator.height}, Widget Count: {generator.widget_count}, Widget Types: {generator.widget_types}, Output File: {generator.output_file}, Layout: {generator.layout}")
         generator.create_random_ui()
         ui = generator.get_ui()

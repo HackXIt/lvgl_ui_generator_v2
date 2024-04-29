@@ -41,7 +41,7 @@ def place_widget(container, widget, spatial_map):
 
 class RandomUI:
     layout_options = ['flex', 'grid', 'none']
-    def __init__(self, width: int, height: int, widget_count: int, widget_types: list[str], output_file: str, layout: str):
+    def __init__(self, width: int, height: int, widget_count: int, widget_types: list[str], output_file: str, layout: str, random_state: bool = False):
         # Store the input parameters
         self.width = int(width)
         self.height = int(height)
@@ -49,6 +49,7 @@ class RandomUI:
         self.widget_types = widget_types
         self.output_file = output_file
         self.layout = layout
+        self.random_state = random_state
         # Initialize random UI
         # self.display_driver = display_driver.DisplayDriver()
         # self.display_driver.init()
@@ -123,7 +124,8 @@ class RandomUI:
         if widget_type not in widget_types:
             raise ValueError(f'Invalid widget type: {widget_type} (valid options: {",".join(widget_types)})')
         widget = widget_mapping[widget_type]({})
-        randomize_state(widget)
+        if self.random_state:
+            randomize_state(widget)
         widget.set_parent(self.container)
         self.type_count[widget_type] = self.type_count.get(widget_type, 0) + 1
         self.objects.append(widget)

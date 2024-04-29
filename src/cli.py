@@ -16,6 +16,7 @@ def process_generator_arguments(parser: argparse.ArgumentParser, print_help: boo
     parser.add_argument('-t', '--widget_types', type=str, nargs='+', required=True, help='A list of widget types')
     parser.add_argument('-d', '--delay_count', type=int, help='screenshot delay')
     parser.add_argument('-l', '--layout', type=str, required=True, help='the layout option')
+    parser.add_argument('--random-state', action='store_true', help='Use a random state for each created widget (experimental)')
     if print_help:
         parser.usage(True)
         sys.exit(0)
