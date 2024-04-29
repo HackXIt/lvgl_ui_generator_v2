@@ -12,18 +12,21 @@ class UiLoader:
     valid_layouts = ["none", "grid", "flex"]
     valid_flow = ["row", "column", "row_wrap", "column_wrap", "row_reverse", "column_reverse"]
     _options = "options"
-    def __init__(self, json_file):
-        # Load JSON data from file
-        with open(json_file, "r") as file:
-            json_data = file.read()
+    def __init__(self, json_file: str):
         # Load JSON data
-        self.data = json.loads(json_data)
+        self.data = self.load_json_file(json_file)
         if "ui" not in self.data or type(self.data["ui"]) is not dict:
             raise ValueError(f"JSON must have 'ui' property of type dict: {self.data}")
         self.ui = self.data["ui"]
         # Create a dictionary to store references to created widgets
         self.widgets = {}
         self.styles = {}
+
+    @staticmethod
+    def load_json_file(filepath):
+        """Load and return the JSON data from a file."""
+        with open(filepath, 'r') as file:
+            return json.load(file)
     
     def initialize_screen(self):
         # Create the screen
@@ -104,22 +107,25 @@ class UiLoader:
         if "layout" not in options or options["layout"] not in self.valid_layouts:
             raise ValueError(f"Container widget must have 'layout' property: {options}. Valid options are: {self.valid_layouts}")
         container = lv.obj(lv.screen_active())
-        layout = options["layout"]
+        layout = options["layout_type"]
         if layout == "none":
             container.set_layout(lv.LAYOUT.NONE)
-            element["layout_type"] = "none"
+            # element["layout_type"] = "none"
         elif layout == "grid":
             self.configure_grid_layout(container, options)
-            element["layout_type"] = "grid"
+            # element["layout_type"] = "grid"
         elif layout == "flex":
             self.configure_flex_layout(container, options)
-            element["layout_type"] = "flex"
+            # element["layout_type"] = "flex"
         return container
     
-    def configure_flex_layout(self, container, options):
+    def configure_flex_layout(self, container: lv.obj, options):
         container.set_layout(lv.LAYOUT.FLEX)
-        if "flow" not in options or options["flow"] not in self.valid_flow:
-            raise ValueError(f"Flex layout must have 'flow' property: {options}. Valid options are: {self.valid_flow}")
+        if "layout_options" not in options or options["layout_options"] is not dict:
+            raise ValueError(f"Flex layout must have 'layout_options' property: {options}.")
+        options = options["layout_options"]
+        if "flow" not in options["layout_options"] or options["layout_options"]["flow"] not in self.valid_flow:
+            raise ValueError(f"Flex layout must have 'flow' property: {options['layout_options']}. Valid options are: {self.valid_flow}")
         flow = options["flow"]
         if flow == "row":
             container.set_flex_flow(lv.FLEX_FLOW.ROW)
@@ -135,6 +141,9 @@ class UiLoader:
             container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
 
     def configure_grid_layout(self, container: lv.obj, options):
+        if "layout_options" not in options or options["layout_options"] is not dict:
+            raise ValueError(f"Grid layout must have 'layout_options' property: {options}.")
+        options = options["layout_options"]
         if "grid_dsc" not in options or type(options["grid_dsc"]) is not dict:
             raise ValueError(f"Grid layout must have 'grid_dsc' of type dict: {options}")
         container.set_layout(lv.LAYOUT.GRID)
@@ -234,7 +243,7 @@ class UiLoader:
         # This function converts the value based on the property name
         if "color" in prop_name:
             converted_value = int(value.strip("#"), 16)
-            print(f"Color property conversion: {prop_name}:{value} => {converted_value:x}")
+            print(f"set_{prop_name}: Color property conversion:{value} => {converted_value:x}")
             return lv.color_hex(converted_value)
         elif "font" in prop_name:
             print(f"Font property: {prop_name}:{value}")
@@ -261,6 +270,35 @@ class UiLoader:
                 return lv.ALIGN.RIGHT_MID
             else:
                 return lv.ALIGN.DEFAULT
+        elif "opa" in prop_name:
+            if type(value) != int:
+                print(f"{prop_name}: Invalid opacity value: {value} (expected int)")
+                return None
+            opacity = int(value / 10)
+            if opacity == 0:
+                return lv.OPA._0
+            elif opacity == 1:
+                return lv.OPA._10
+            elif opacity == 2:
+                return lv.OPA._20
+            elif opacity == 3:
+                return lv.OPA._30
+            elif opacity == 4:
+                return lv.OPA._40
+            elif opacity == 5:
+                return lv.OPA._50
+            elif opacity == 6:
+                return lv.OPA._60
+            elif opacity == 7:
+                return lv.OPA._70
+            elif opacity == 8:
+                return lv.OPA._80
+            elif opacity == 9:
+                return lv.OPA._90
+            elif opacity == 10:
+                return lv.OPA._100
+            else:
+                return lv.OPA.TRANSP
         elif "width" in prop_name or "height" in prop_name:
             if type(value) == float:
                 # FIXME Percentage values should be calculated in relation to the parent widget
