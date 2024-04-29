@@ -123,6 +123,7 @@ class RandomUI:
         if widget_type not in widget_types:
             raise ValueError(f'Invalid widget type: {widget_type} (valid options: {",".join(widget_types)})')
         widget = widget_mapping[widget_type]({})
+        randomize_state(widget)
         widget.set_parent(self.container)
         self.type_count[widget_type] = self.type_count.get(widget_type, 0) + 1
         self.objects.append(widget)
