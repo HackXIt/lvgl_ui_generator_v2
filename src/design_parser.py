@@ -49,8 +49,8 @@ class UiLoader:
         self.root_widget = self.parse_element(self.ui["root"])
         self.root_widget.set_parent(lv.screen_active())
         # NOTE The below can be accomplished by setting the width and height of the root widget via style properties
-        # self.root_widget.set_width(self.width)
-        # self.root_widget.set_height(self.height)
+        self.root_widget.set_width(self.width)
+        self.root_widget.set_height(self.height)
 
     def parse_element(self, element):
         # Create a widget based on the element type
@@ -62,11 +62,15 @@ class UiLoader:
                 if child["type"] == "random": # NOTE Random widget is a special case and places itself
                     continue
                 child_widget.set_parent(widget)
-                if "grid" in element["layout_type"]:
+                if "grid" in element['options']["layout_type"]:
                     self.place_widget_in_grid(child_widget, child)
                     
         if "style" in element:
-            self.apply_style(widget, element["style"])
+            if type(element["style"]) is list:
+                for style in element["style"]:
+                    self.apply_style(widget, style)
+            else:
+                self.apply_style(widget, element["style"])
         return widget
 
     def create_widget(self, element) -> lv.obj | lv.button | lv.label | lv.image | lv.line | lv.bar | lv.slider | lv.switch | lv.checkbox | lv.roller | lv.dropdown | lv.textarea | lv.chart:
@@ -82,6 +86,10 @@ class UiLoader:
             widget = widget_mapping[widget_type](element)
         if widget == None:
             raise ValueError(f"Failed to create widget: {element}")
+        if 'width' in element:
+            widget.set_width(element['width'])
+        if 'height' in element:
+            widget.set_height(element['height'])
         # Create a unique ID for the widget if it wasn't provided
         if "id" not in element:
             # Count types of the widget
@@ -104,28 +112,28 @@ class UiLoader:
         if "options" not in element or type(element["options"]) is not dict:
             raise ValueError(f"Container widget must have 'options' of type dict: {element}")
         options = element["options"]
-        if "layout" not in options or options["layout"] not in self.valid_layouts:
-            raise ValueError(f"Container widget must have 'layout' property: {options}. Valid options are: {self.valid_layouts}")
+        if "layout_type" not in options or options["layout_type"] not in self.valid_layouts:
+            raise ValueError(f"Container widget must have 'layout_type' property: {options}. Valid options are: {self.valid_layouts}")
+        if 'grid' in options["layout_type"] or 'flex' in options["layout_type"]:
+            if "layout_options" not in options or type(options["layout_options"]) is not dict:
+                raise ValueError(f"Container widget must have 'layout_options' property of type dict: {options}")
         container = lv.obj(lv.screen_active())
         layout = options["layout_type"]
         if layout == "none":
             container.set_layout(lv.LAYOUT.NONE)
             # element["layout_type"] = "none"
         elif layout == "grid":
-            self.configure_grid_layout(container, options)
+            self.configure_grid_layout(container, options['layout_options'])
             # element["layout_type"] = "grid"
         elif layout == "flex":
-            self.configure_flex_layout(container, options)
+            self.configure_flex_layout(container, options['layout_options'])
             # element["layout_type"] = "flex"
         return container
     
     def configure_flex_layout(self, container: lv.obj, options):
+        if "flow" not in options or options["flow"] not in self.valid_flow:
+            raise ValueError(f"Flex layout must have 'flow' property: {options}. Valid options are: {self.valid_flow}")
         container.set_layout(lv.LAYOUT.FLEX)
-        if "layout_options" not in options or options["layout_options"] is not dict:
-            raise ValueError(f"Flex layout must have 'layout_options' property: {options}.")
-        options = options["layout_options"]
-        if "flow" not in options["layout_options"] or options["layout_options"]["flow"] not in self.valid_flow:
-            raise ValueError(f"Flex layout must have 'flow' property: {options['layout_options']}. Valid options are: {self.valid_flow}")
         flow = options["flow"]
         if flow == "row":
             container.set_flex_flow(lv.FLEX_FLOW.ROW)
@@ -141,9 +149,6 @@ class UiLoader:
             container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
 
     def configure_grid_layout(self, container: lv.obj, options):
-        if "layout_options" not in options or options["layout_options"] is not dict:
-            raise ValueError(f"Grid layout must have 'layout_options' property: {options}.")
-        options = options["layout_options"]
         if "grid_dsc" not in options or type(options["grid_dsc"]) is not dict:
             raise ValueError(f"Grid layout must have 'grid_dsc' of type dict: {options}")
         container.set_layout(lv.LAYOUT.GRID)
@@ -152,26 +157,28 @@ class UiLoader:
             raise ValueError(f"grid_dsc must have 'col_dsc' and 'row_dsc' of type list: {options['grid_dsc']}")
         col_dsc = []
         for col in options["grid_dsc"]["col_dsc"]:
-            if type(col) is int:
-                col_dsc.append(col)
-            elif type(col) is str:
-                if col.endswith("fr"):
-                    col_dsc.append(lv.grid_fr(int(col.strip("fr"))))
-                elif col == "content":
-                    col_dsc.append(lv.GRID_CONTENT)
-                else:
-                    raise ValueError(f"Unsupported column description: {col}. Must be an integer, '#fr' value or 'content'.")
+            col_dsc.append(lv.GRID_CONTENT) # NOTE Hotfix for ChatGPT (always use content for proper sizes)
+            # if type(col) is int:
+            #     col_dsc.append(col)
+            # elif type(col) is str:
+            #     if col.endswith("fr"):
+            #         col_dsc.append(lv.grid_fr(int(col.strip("fr"))))
+            #     elif col == "content":
+            #         col_dsc.append(lv.GRID_CONTENT)
+            #     else:
+            #         raise ValueError(f"Unsupported column description: {col}. Must be an integer, '#fr' value or 'content'.")
         row_dsc = []
         for row in options["grid_dsc"]["row_dsc"]:
-            if type(row) is int:
-                row_dsc.append(row)
-            elif type(row) is str:
-                if row.endswith("fr"):
-                    row_dsc.append(lv.grid_fr(int(row.strip("fr"))))
-                elif row == "content":
-                    row_dsc.append(lv.GRID_CONTENT)
-                else:
-                    raise ValueError(f"Unsupported row description: {row}. Must be an integer, '#fr' value or 'content'.")
+            row_dsc.append(lv.GRID_CONTENT) # NOTE Hotfix for ChatGPT (always use content for proper sizes)
+            # if type(row) is int:
+            #     row_dsc.append(row)
+            # elif type(row) is str:
+            #     if row.endswith("fr"):
+            #         row_dsc.append(lv.grid_fr(int(row.strip("fr"))))
+            #     elif row == "content":
+            #         row_dsc.append(lv.GRID_CONTENT)
+            #     else:
+            #         raise ValueError(f"Unsupported row description: {row}. Must be an integer, '#fr' value or 'content'.")
         container.set_grid_dsc_array(col_dsc, row_dsc)
 
     def create_random_widget(self, element):
@@ -186,7 +193,11 @@ class UiLoader:
             widget = self.create_widget(element)
             widget.set_parent(self.widgets[element["parent_id"]])
             if "style" in element:
-                self.apply_style(widget, element["style"])
+                if type(element["style"]) is list:
+                    for style in element["style"]:
+                        self.apply_style(widget, style)
+                else:
+                    self.apply_style(widget, element["style"])
             if "placement" in element:
                 # NOTE Assuming parent is grid layout if "placement" is present
                 # FIXME placement should be adjusted for each created random widget, as they can't all be in the same spot
@@ -338,6 +349,9 @@ class UiLoader:
                 self.styles[f"{style_name}_selector"] = lv.PART.MAIN
         widget.add_style(self.styles[style_name], self.styles[f"{style_name}_selector"])
 
+    def update_screen(self):
+        lv.screen_load(self.root_widget)
+        self.root_widget.update_layout()
 # NOTE ------------ GETTERS ------------
 
     def get_root_widget(self):
@@ -346,8 +360,7 @@ class UiLoader:
     def get_ui(self) -> UI:
         ui = UI()
         ui["count"] = len(self.widgets)
-        lv.screen_load(self.root_widget)
-        self.root_widget.update_layout()
+        self.update_screen()
         for id, widget in self.widgets.items():
             if type(widget) is lv.obj:
                 continue # Skip container widgets
@@ -364,8 +377,14 @@ class UiLoader:
         return ui
     
     def cleanup(self):
-        for widget in self.widgets.values():
-            widget.delete()
+        # Cleanup the screen and widgets (passing twice to delete widgets before containers)
+        for id, widget in self.widgets.items():
+            try:
+                widget.delete()
+                self.widgets.pop(id)
+            except Exception as e:
+                print(f"Error deleting widget {id}: {e}")
+        
 
 if __name__ == "__main__":
     # Load UI from JSON file
