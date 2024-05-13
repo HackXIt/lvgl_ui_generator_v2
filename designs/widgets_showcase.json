@@ -1,0 +1,437 @@
+{
+    "$schema": "../../ui-detector/schema/design_file.schema.json",
+    "ui": {
+        "window": {
+            "width": 640,
+            "height": 640,
+            "title": "Widget showcase"
+        },
+        "root": {
+            "id": "main_container",
+            "type": "container",
+            "options": {
+                "layout_type": "flex",
+                "layout_options": {
+                    "flow": "row_wrap"
+                }
+            },
+            "style": [
+                "main_container_style"
+            ],
+            "children": [
+                {
+                    "id": "grid_1",
+                    "type": "container",
+                    "options": {
+                        "layout_type": "grid",
+                        "layout_options": {
+                            "grid_dsc": {
+                                "col_dsc": [
+                                    "content",
+                                    "content"
+                                ],
+                                "row_dsc": [
+                                    "content",
+                                    "content",
+                                    "content",
+                                    "content",
+                                    "content",
+                                    "content",
+                                    "content"
+                                ]
+                            }
+                        }
+                    },
+                    "style": [
+                        "grid_container_style"
+                    ],
+                    "children": [
+                        {
+                            "id": "button_1",
+                            "type": "button",
+                            "options": {
+                                "text": "A button"
+                            },
+                            "placement": {
+                                "row_pos": 0,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 2
+                            }
+                        },
+                        {
+                            "id": "label_1",
+                            "type": "label",
+                            "options": {
+                                "text": "Checkbox"
+                            },
+                            "placement": {
+                                "row_pos": 1,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "checkbox_1",
+                            "type": "checkbox",
+                            "options": {
+                                "state": "default"
+                            },
+                            "placement": {
+                                "row_pos": 1,
+                                "col_pos": 1,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "label_2",
+                            "type": "label",
+                            "options": {
+                                "text": "Switch"
+                            },
+                            "placement": {
+                                "row_pos": 2,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "switch_1",
+                            "type": "switch",
+                            "options": {
+                                "state": "hovered"
+                            },
+                            "placement": {
+                                "row_pos": 2,
+                                "col_pos": 1,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "label_3",
+                            "type": "label",
+                            "options": {
+                                "text": "Just a text label"
+                            },
+                            "placement": {
+                                "row_pos": 3,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 2
+                            }
+                        },
+                        {
+                            "id": "label_4",
+                            "type": "label",
+                            "options": {
+                                "text": "Bar"
+                            },
+                            "placement": {
+                                "row_pos": 4,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "bar_1",
+                            "type": "bar",
+                            "options": {
+                                "value": 37
+                            },
+                            "placement": {
+                                "row_pos": 4,
+                                "col_pos": 1,
+                                "row_span": 1,
+                                "col_span": 1
+                            },
+                            "style": [
+                                "bar_style"
+                            ]
+                        },
+                        {
+                            "id": "label_5",
+                            "type": "label",
+                            "options": {
+                                "text": "Slider"
+                            },
+                            "placement": {
+                                "row_pos": 5,
+                                "col_pos": 0,
+                                "row_span": 1,
+                                "col_span": 1
+                            }
+                        },
+                        {
+                            "id": "slider_1",
+                            "type": "slider",
+                            "options": {
+                                "range_min": 0,
+                                "range_max": 100,
+                                "value": 37
+                            },
+                            "placement": {
+                                "row_pos": 5,
+                                "col_pos": 1,
+                                "row_span": 1,
+                                "col_span": 1
+                            },
+                            "style": [
+                                "slider_style"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "flex_1",
+                    "type": "container",
+                    "options": {
+                        "layout_type": "flex",
+                        "layout_options": {
+                            "flow": "column_wrap"
+                        }
+                    },
+                    "style": [
+                        "flex_container_style"
+                    ],
+                    "children": [
+                        {
+                            "id": "label_6",
+                            "type": "label",
+                            "options": {
+                                "text": "Arc"
+                            }
+                        },
+                        {
+                            "id": "arc_1",
+                            "type": "arc",
+                            "options": {
+                                "mode": "normal",
+                                "rotation": 270,
+                                "angle_range": [
+                                    0,
+                                    270
+                                ],
+                                "value": 120
+                            },
+                            "style": [
+                                "arc_style"
+                            ]
+                        },
+                        {
+                            "id": "label_7",
+                            "type": "label",
+                            "options": {
+                                "text": "Scale"
+                            }
+                        },
+                        {
+                            "id": "scale_1",
+                            "type": "scale",
+                            "options": {
+                                "mode": "round_outer",
+                                "show_labels": true,
+                                "total_ticks": 60,
+                                "major_ticks": 10,
+                                "minor_range": 1,
+                                "major_range": 10,
+                                "sections": 7,
+                                "labels": [
+                                    "20",
+                                    "40",
+                                    "60",
+                                    "80",
+                                    "100",
+                                    "120",
+                                    "140"
+                                ]
+                            },
+                            "style": [
+                                "scale_style"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "buttonmatrix_1",
+                    "type": "buttonmatrix",
+                    "options": {
+                        "map": [
+                            [
+                                "7",
+                                "8",
+                                "9"
+                            ],
+                            [
+                                "4",
+                                "5",
+                                "6"
+                            ],
+                            [
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            [
+                                "0",
+                                ".",
+                                "C"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "id": "calendar_1",
+                    "type": "calendar",
+                    "options": {
+                        "current_date": {
+                            "year": 2024,
+                            "month": 5,
+                            "day": 12
+                        },
+                        "showed_date": {
+                            "year": 2024,
+                            "month": 5
+                        },
+                        "date_highlights": [
+                            {
+                                "year": 2024,
+                                "month": 5,
+                                "day": 1
+                            },
+                            {
+                                "year": 2024,
+                                "month": 5,
+                                "day": 9
+                            },
+                            {
+                                "year": 2024,
+                                "month": 5,
+                                "day": 20
+                            },
+                            {
+                                "year": 2024,
+                                "month": 5,
+                                "day": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "roller_1",
+                    "type": "roller",
+                    "options": {
+                        "entries": [
+                            "Item 1",
+                            "Item 2",
+                            "Item 3"
+                        ],
+                        "mode": "infinite",
+                        "visible_rows": 4
+                    }
+                },
+                {
+                    "id": "dropdown_1",
+                    "type": "dropdown",
+                    "options": {
+                        "entries": [
+                            "Item 1",
+                            "Item 2",
+                            "Item 3"
+                        ]
+                    }
+                },
+                {
+                    "id": "textarea_1",
+                    "type": "textarea",
+                    "options": {
+                        "text": "This is a text area\nwhich has\nmulti-line text."
+                    },
+                    "style": [
+                        "textarea_style"
+                    ]
+                },
+                {
+                    "id": "table_1",
+                    "type": "table",
+                    "options": {
+                        "column_count": 3,
+                        "row_count": 3,
+                        "cell_contents": [
+                            [
+                                "R1C1",
+                                "R1C2",
+                                "R1C3"
+                            ],
+                            [
+                                "R2C1",
+                                "R2C2",
+                                "R2C3"
+                            ],
+                            [
+                                "R3C1",
+                                "R3C2",
+                                "R3C3"
+                            ]
+                        ],
+                        "column_widths": [
+                            70,
+                            70,
+                            70
+                        ]
+                    }
+                }
+            ]
+        },
+        "styles": {
+            "main_container_style": {
+                "bg_color": "#f0f0f0"
+            },
+            "grid_container_style": {
+                "bg_color": "#f0f0f0",
+                "border_color": "#000000",
+                "border_width": 1,
+                "width": 250,
+                "height": 220
+            },
+            "flex_container_style": {
+                "bg_color": "#f0f0f0",
+                "border_color": "#000000",
+                "border_width": 1,
+                "width": 330,
+                "height": 220
+            },
+            "arc_style": {
+                "pad_all": 10,
+                "margin_top": 10
+            },
+            "scale_style": {
+                "pad_all": 10,
+                "margin_top": 10
+            },
+            "bar_style": {
+                "bg_color": "#f0f0f0",
+                "border_color": "#000000",
+                "border_width": 1,
+                "width": 100
+            },
+            "slider_style": {
+                "bg_color": "#f0f0f0",
+                "border_color": "#000000",
+                "border_width": 1,
+                "width": 100
+            },
+            "textarea_style": {
+                "bg_color": "#f0f0f0",
+                "border_color": "#000000",
+                "border_width": 1,
+                "width": 150,
+                "height": 100
+            }
+        }
+    }
+}
