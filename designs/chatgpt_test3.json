@@ -1,0 +1,161 @@
+{
+  "ui": {
+    "window": {
+      "width": 1024,
+      "height": 768,
+      "title": "Smart Home Control Panel"
+    },
+    "root": {
+      "type": "container",
+      "id": "main_screen",
+      "options": {
+        "layout_type": "grid",
+        "layout_options": {
+          "grid_dsc": {
+            "col_dsc": ["1fr", "1fr", "1fr"],
+            "row_dsc": ["1fr", "1fr", "1fr"]
+          }
+        }
+      },
+      "style": "module_container",
+      "children": [
+        {
+          "type": "container",
+          "id": "lighting_control_module",
+          "options": {
+            "layout_type": "grid",
+            "layout_options": {
+              "grid_dsc": {
+                "col_dsc": ["content", "content", "1fr"],
+                "row_dsc": ["content"]
+              }
+            }
+          },
+          "style": "module_container",
+          "children": [
+            {
+              "type": "led",
+              "id": "light_status",
+              "options": {},
+              "style": "status_indicator"
+            },
+            {
+              "type": "button",
+              "id": "light_toggle_button",
+              "options": {
+                "text": "Toggle Light"
+              },
+              "style": "control_button"
+            },
+            {
+              "type": "slider",
+              "id": "light_dim_slider",
+              "options": {
+                "range_min": 0,
+                "range_max": 100,
+                "value": 50
+              },
+              "style": "dim_slider"
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "id": "heating_control_module",
+          "options": {
+            "layout_type": "grid",
+            "layout_options": {
+              "grid_dsc": {
+                "col_dsc": ["1fr", "2fr"],
+                "row_dsc": ["content"]
+              }
+            }
+          },
+          "style": "module_container",
+          "children": [
+            {
+              "type": "label",
+              "id": "current_temperature",
+              "options": {
+                "text": "22°C"
+              },
+              "style": "temperature_display"
+            },
+            {
+              "type": "slider",
+              "id": "temperature_adjust_slider",
+              "options": {
+                "range_min": 10,
+                "range_max": 30,
+                "value": 22
+              },
+              "style": "temperature_slider"
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "id": "security_system_module",
+          "options": {
+            "layout_type": "none"
+          },
+          "style": "module_container",
+          "children": [
+            {
+              "type": "switch",
+              "id": "security_system_switch",
+              "options": {},
+              "style": "security_toggle"
+            },
+            {
+              "type": "led",
+              "id": "security_system_status",
+              "options": {
+                "brightness": 100
+              },
+              "style": "status_indicator"
+            }
+          ]
+        }
+      ]
+    },
+    "styles": {
+      "module_container": {
+        "bg_color": "#DDDDDD",
+        "border_color": "#CCCCCC",
+        "border_width": 1,
+        "shadow_width": 5,
+        "shadow_color": "#AAAAAA",
+        "shadow_opa": 50,
+        "outline_width": 10,
+        "outline_color": "#CCCCCC",
+        "outline_opa": 50
+      },
+      "control_button": {
+        "bg_color": "#007BFF",
+        "text_color": "#FFFFFF",
+        "outline_width": 10,
+        "outline_color": "#FFFFFF",
+        "outline_opa": 100
+      },
+      "dim_slider": {
+        "bg_color": "#BBBBBB"
+      },
+      "temperature_slider": {
+        "bg_color": "#BBBBBB"
+      },
+      "status_indicator": {
+        "bg_color": "#FF0000",
+        "bg_opa": 80
+      },
+      "temperature_display": {
+        "font": "Arial",
+        "text_color": "#000000"
+      },
+      "security_toggle": {
+        "bg_color": "#AAAAAA",
+        "text_color": "#FFFFFF"
+      }
+    }
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "ui": {
+    "window": {
+      "width": 800,
+      "height": 480,
+      "title": "Compact Command Center"
+    },
+    "root": {
+      "type": "container",
+      "options": {
+        "layout_type": "flex",
+        "layout_options": {
+          "flow": "column"
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "options": {
+            "layout_type": "flex",
+            "layout_options": {
+              "flow": "row"
+            }
+          },
+          "children": [
+            {
+              "type": "arc",
+              "options": {
+                "mode": "normal",
+                "value": 75,
+                "rotation": 270,
+                "angle_range": 180
+              },
+              "style": "indicatorStyle"
+            },
+            {
+              "type": "bar",
+              "options": {
+                "value": 60
+              },
+              "style": "indicatorStyle"
+            },
+            {
+              "type": "led",
+              "options": {
+                "brightness": 80
+              },
+              "style": "statusLedStyle"
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "options": {
+            "layout_type": "none"
+          },
+          "children": [
+            {
+              "type": "label",
+              "options": {
+                "text": "System Status: Operational"
+              },
+              "style": "infoStyle"
+            },
+            {
+              "type": "label",
+              "options": {
+                "text": "Time: 12:34"
+              },
+              "style": "infoStyle"
+            },
+            {
+              "type": "label",
+              "options": {
+                "text": "Date: 2023-09-17"
+              },
+              "style": "infoStyle"
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "options": {
+            "layout_type": "grid",
+            "layout_options": {
+              "grid_dsc": {
+                "col_dsc": ["1fr", "1fr", "1fr"],
+                "row_dsc": ["content"]
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "switch",
+              "options": {
+                "state": "default"
+              },
+              "style": "controlStyle"
+            },
+            {
+              "type": "buttonmatrix",
+              "options": {
+                "map": [
+                  ["Reboot", "Shutdown", "Activate"]
+                ]
+              },
+              "style": "controlStyle"
+            }
+          ]
+        }
+      ],
+      "styles": {
+        "indicatorStyle": {
+          "bg_color": "#EEEEEE",
+          "border_color": "#CCCCCC",
+          "border_width": 1
+        },
+        "statusLedStyle": {
+          "bg_color": "#FF0000"
+        },
+        "infoStyle": {
+          "text_color": "#333333",
+          "font": "Arial",
+          "align": "center"
+        },
+        "controlStyle": {
+          "bg_color": "#DDDDDD",
+          "text_color": "#000000",
+          "font": "Arial",
+          "align": "center"
+        }
+      }
+    }
+  }
+}

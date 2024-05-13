@@ -1,0 +1,128 @@
+{
+    "ui": {
+        "window": {
+            "width": 800,
+            "height": 480,
+            "title": "Smart Home Control Panel"
+        },
+        "root": {
+            "type": "container",
+            "id": "root_container",
+            "options": {
+                "layout_type": "grid",
+                "layout_options": {
+                    "grid_dsc": {
+                        "col_dsc": [
+                            "1fr",
+                            "3fr"
+                        ],
+                        "row_dsc": [
+                            "content",
+                            "1fr"
+                        ]
+                    }
+                }
+            },
+            "children": [
+                {
+                    "type": "container",
+                    "id": "topbar_container",
+                    "options": {
+                        "layout_type": "flex",
+                        "layout_options": {
+                            "flow": "row"
+                        }
+                    },
+                    "style": "topbar_style",
+                    "children": [
+                        {
+                            "type": "label",
+                            "options": {
+                                "text": "12:00"
+                            },
+                            "style": "clock_style"
+                        },
+                        {
+                            "type": "label",
+                            "options": {
+                                "text": "Clear Skies, 24°C"
+                            },
+                            "style": "weather_style"
+                        },
+                        {
+                            "type": "label",
+                            "options": {
+                                "text": "System Normal"
+                            },
+                            "style": "system_status_style"
+                        }
+                    ]
+                },
+                {
+                    "type": "container",
+                    "id": "button_container",
+                    "options": {
+                        "layout_type": "grid",
+                        "layout_options": {
+                            "grid_dsc": {
+                                "col_dsc": [
+                                    "1fr",
+                                    "1fr",
+                                    "1fr",
+                                    "1fr"
+                                ],
+                                "row_dsc": [
+                                    "1fr"
+                                ]
+                            }
+                        }
+                    },
+                    "children": [
+                        {
+                            "type": "button",
+                            "options": {
+                                "text": "Lights"
+                            }
+                        },
+                        {
+                            "type": "button",
+                            "options": {
+                                "text": "HVAC"
+                            }
+                        },
+                        {
+                            "type": "button",
+                            "options": {
+                                "text": "Security"
+                            }
+                        },
+                        {
+                            "type": "button",
+                            "options": {
+                                "text": "Media"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "styles": {
+            "topbar_style": {
+                "bg_color": "#333333",
+                "text_color": "#ffffff"
+            },
+            "clock_style": {
+                "font": "bold 24px",
+                "align": "left"
+            },
+            "weather_style": {
+                "font": "16px",
+                "align": "center"
+            },
+            "system_status_style": {
+                "font": "16px",
+                "align": "right"
+            }
+        }
+    }
+}
