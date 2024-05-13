@@ -76,7 +76,28 @@ class RandomUI:
         return self
 
     def create_random_layout_flex(self):
-        ...
+        self.container.set_layout(lv.LAYOUT.FLEX)
+        self.container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
+        print(f'{self.widget_count}: {type(self.widget_count)}')
+        for i in range(self.widget_count):
+            widget_type = random.choice(self.widget_types)
+            widget_info, widget = self.create_random_widget(widget_type)
+            lv.screen_load(self.container)
+            self.container.update_layout()
+            self.randomize_style(widget)
+            lv.screen_load(self.container)
+            self.container.update_layout()
+            tmp_coords = lv.area_t()
+            widget.get_coords(tmp_coords)
+            widget_info["x"] = (tmp_coords.x1 + tmp_coords.x2) // 2
+            widget_info["y"] = (tmp_coords.y1 + tmp_coords.y2) // 2
+            widget_info['width'] = widget.get_width()
+            widget_info['height'] = widget.get_height()
+            self.widgets['objects'].append(widget_info)
+            self.objects.append(widget)
+            print(f'[{i}]: {widget_info}')
+        self.widgets['count'] = len(self.widgets['objects'])
+        print(self.widgets)
 
     def create_random_layout_grid(self):
         ...
