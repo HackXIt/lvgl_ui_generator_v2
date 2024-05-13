@@ -43,7 +43,7 @@ def main():
         write_yolo_pixel(ui, output_file=args.output_file.replace('.jpg', '.txt'))
     if args.mode == 'design':
         print('Design mode cleanup')
-        # loader.cleanup()
+        loader.cleanup()
     elif args.mode == 'random':
         print('Random mode cleanup')
         generator.cleanup()
