@@ -35,14 +35,17 @@ def main():
         raise ValueError('UI object is None')
     if root_widget is None:
         raise ValueError('Root widget is None')
+    print("Taking screenshot...")
     take_screenshot(root_widget, args.output_file)
     if args.normalize:
         write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=ui['width'], height=ui['height'])
     else:
         write_yolo_pixel(ui, output_file=args.output_file.replace('.jpg', '.txt'))
     if args.mode == 'design':
-        loader.cleanup()
+        print('Design mode cleanup')
+        # loader.cleanup()
     elif args.mode == 'random':
+        print('Random mode cleanup')
         generator.cleanup()
 
 if __name__ == "__main__":
