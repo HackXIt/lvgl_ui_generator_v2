@@ -313,8 +313,14 @@ def bgr_to_rgb(data):
 
 def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
     snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
+    print(f"Snapshot: {snapshot} ({type(snapshot)}, {snapshot.data_size} bytes)")
     data_size = snapshot.data_size
     buffer = snapshot.data.__dereference__(data_size)
     img = image(container.get_width(), container.get_height(), "rgb", bgr_to_rgb(buffer))
-    with open(output_file, 'wb') as f:
-        f.write(serialize(img, quality))
+    try:
+        with open(output_file, 'wb') as f:
+            f.write(serialize(img, quality))
+    except MemoryError as e:
+        print(e)
+    finally:
+        lv.snapshot_free(snapshot)
