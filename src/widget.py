@@ -70,9 +70,20 @@ def create_buttonmatrix(element) -> lv.buttonmatrix:
     widget = lv.buttonmatrix(lv.screen_active())
     if "options" in element:
         map = element["options"].get("map", [random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
+        if type(map[0]) is list:
+            # NOTE Flatten the map
+            new_map = []
+            for i in range(len(map)):
+                for j in range(len(map[i])):
+                    new_map.append(map[i][j])
+                if i != len(map) - 1:
+                    new_map.append("\n")
+            new_map.append("") # NOTE Add an empty string to the end (must be done according to docs)
+            map = new_map
+            print(f"New map: {map}")
         widget.set_map(map)
     else:
-        widget.set_map([random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
+        widget.set_map(["".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))]) for _ in range(random.randint(1, 10))])
     return widget
 
 def create_calendar(element) -> lv.calendar:
@@ -85,8 +96,8 @@ def create_calendar(element) -> lv.calendar:
         if "year" not in showed_date or "month" not in showed_date:
             raise ValueError(f"Invalid date format for showed_date: {showed_date}. Must have 'year', 'month' keys.")
         date_highlights = element["options"].get("date_highlights", [])
-        widget.set_today_date(current_date.year, current_date.month, current_date.day)
-        widget.set_showed_date(showed_date.year, showed_date.month)
+        widget.set_today_date(current_date['year'], current_date['month'], current_date['day'])
+        widget.set_showed_date(showed_date['year'], showed_date['month'])
         if len(date_highlights) > 0:
             if type(date_highlights) is not list:
                 raise ValueError(f"Invalid date_highlights format: {date_highlights}. Must be a list.")
@@ -95,9 +106,9 @@ def create_calendar(element) -> lv.calendar:
                 if "year" not in date_highlight or "month" not in date_highlight or "day" not in date_highlight:
                     raise ValueError(f"Invalid date format for date_highlight: {date_highlight}. Must have 'year', 'month', 'day' keys.")
                 date = lv.calendar_date_t()
-                date.year = date_highlight.year
-                date.month = date_highlight.month
-                date.day = date_highlight.day
+                date.year = date_highlight['year']
+                date.month = date_highlight['month']
+                date.day = date_highlight['day']
                 highlights.append(date)
             widget.set_highlighted_dates(highlights, len(highlights))
     else:
@@ -296,8 +307,16 @@ def create_table(element) -> lv.table:
     if "options" in element:
         col_cnt = element["options"].get("column_count", 1)
         row_cnt = element["options"].get("row_count", 1)
+        col_widths = element["options"].get("column_widths", [random.randint(10, 50) for _ in range(col_cnt)])
+        cell_contents = element["options"].get("cell_contents", [[random.choice(ascii_letters) for _ in range(col_cnt)] for _ in range(row_cnt)])
         widget.set_column_count(col_cnt)
         widget.set_row_count(row_cnt)
+        for i, width in enumerate(col_widths):
+            widget.set_column_width(i, width)
+        # Iterate over the array of arrays of string (cell_content) and set the cell value starting with row 0, col 0
+        for i, row in enumerate(cell_contents):
+            for j, content in enumerate(row):
+                widget.set_cell_value(i, j, content)
     else:
         widget.set_column_count(random.randint(1, 3))
         widget.set_row_count(random.randint(1, 3))
