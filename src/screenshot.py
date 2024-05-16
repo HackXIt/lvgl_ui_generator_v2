@@ -324,4 +324,4 @@ def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
     except MemoryError as e:
         print(e)
     finally:
-        lv.snapshot_free(snapshot)
+        snapshot.destroy()
