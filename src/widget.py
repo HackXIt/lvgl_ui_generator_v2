@@ -295,8 +295,8 @@ def create_spinner(element) -> lv.spinner:
 def create_switch(element) -> lv.switch:
     widget = lv.switch(lv.screen_active())
     if "options" in element:
-        state = element["options"].get("state", False)
-        sw_state = getattr(lv.STATE, state.upper(), lv.STATE.DISABLED)
+        state = element["options"].get("state", 'default')
+        sw_state = getattr(lv.STATE, state.upper(), lv.STATE.DEFAULT)
         widget.add_state(sw_state)
     else:
         widget.add_state(lv.STATE.DEFAULT)
