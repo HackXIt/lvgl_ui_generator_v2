@@ -2,15 +2,14 @@ import lvgl as lv
 from struct import pack
 # import jpeg
 
-# copy-pasta from jpeg
+# NOTE The following code is taken from the JPEG encoder of: https://github.com/xxyxyz/flat/blob/master/flat/jpeg.py
+
+# copy-pasta from jpeg.jpy
 _z_z = bytes([ # Zig-zag indices of AC coefficients
          1,  8, 16,  9,  2,  3, 10, 17, 24, 32, 25, 18, 11,  4,  5,
     12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13,  6,  7, 14, 21, 28,
     35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51,
     58, 59, 52, 45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63])
-
-
-
 
 _luminance_quantization = bytes([ # Luminance quantization table in zig-zag order
     16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40,
@@ -306,12 +305,14 @@ def serialize(image, quality):
         b'\xff\xd9']) # EOI
 
 def bgr_to_rgb(data):
+    """Swap the BGR values to RGB in a flat bytearray."""
     # Assume data is a flat bytearray in BGR format
     for i in range(0, len(data), 3):
         data[i], data[i+2] = data[i+2], data[i]  # Swap the B and R values
     return data
 
 def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
+    """Take a screenshot of a container using the LVGL snapshot API and save it to a JPG file."""
     snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
     print(f"Snapshot: {snapshot} ({type(snapshot)}, {snapshot.data_size} bytes)")
     data_size = snapshot.data_size

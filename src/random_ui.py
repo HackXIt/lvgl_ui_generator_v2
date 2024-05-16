@@ -9,12 +9,14 @@ from widget import *
 from global_definitions import widget_types, ascii_letters
 
 class SpatialMap:
+    """A simple spatial map to keep track of occupied areas in a container."""
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.occupied = []
 
     def is_space_available(self, x, y, w, h):
+        """Check if the given space is available for a widget."""
         # Check if within container boundaries
         if x + w > self.width or y + h > self.height:
             return False
@@ -27,9 +29,16 @@ class SpatialMap:
         return True
 
     def occupy_space(self, x, y, w, h):
+        """Mark the given space as occupied."""
         self.occupied.append({'x': x, 'y': y, 'width': w, 'height': h})
 
 def place_widget(container, widget, spatial_map):
+    """
+    Place a widget in a container, avoiding overlap with other widgets.
+    Placement occurs virtually be checking if the widget fits in the container using a spatial map.
+    The placing is done randomly within the container space and by checking the spatial map to avoid overlap with other widgets.
+    Placement is attempted 100 times before giving up.
+    """
     for _ in range(100):  # Try 100 times to find a spot
         x = random.randint(0, container.width - widget.get_width())
         y = random.randint(0, container.height - widget.get_height())
@@ -60,6 +69,7 @@ class RandomUI:
         driver(width=self.width, height=self.height)
     
     def create_random_ui(self):
+        """Create a random UI window with the specified width and height."""
         if self.layout not in self.layout_options:
             raise ValueError(f'Invalid layout: {self.layout} (valid options: {",".join(self.layout_options)})')
         # Create a screen
@@ -76,6 +86,7 @@ class RandomUI:
         return self
 
     def create_random_layout_flex(self):
+        """Create a container layout using the flex layout."""
         self.container.set_layout(lv.LAYOUT.FLEX)
         self.container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
         print(f'{self.widget_count}: {type(self.widget_count)}')
@@ -100,9 +111,17 @@ class RandomUI:
         print(self.widgets)
 
     def create_random_layout_grid(self):
+        """Create a container layout using the grid layout. (Not implemented)"""
         ...
     
     def create_random_layout_none(self):
+        """
+        Create a container layout with absolute positioning.
+        Widgets are placed randomly within the container, attempting to avoid overlap.
+        Spacing between widgets is not guaranteed.
+        Style properties are randomized for each widget.
+        Widget metadata of the UI is stored in the `widgets` dictionary.
+        """
         spatial_map = SpatialMap(self.width, self.height)
         print(f'{self.widget_count}: {type(self.widget_count)}')
         for i in range(self.widget_count):
@@ -131,6 +150,12 @@ class RandomUI:
         print(self.widgets)
 
     def place_widget(self, widget, spatial_map: SpatialMap):
+        """
+        Place a widget in a container, avoiding overlap with other widgets.
+        Placement occurs virtually be checking if the widget fits in the container using a spatial map.
+        The placing is done randomly within the container space and by checking the spatial map to avoid overlap with other widgets.
+        Placement is attempted 100 times before giving up.
+        """
         max_attempts = 100  # Max attempts to find a suitable spot
         for _ in range(max_attempts):
             x = random.randint(0, self.width - widget.get_width())
@@ -142,6 +167,10 @@ class RandomUI:
         return False  # Could not place the widget
 
     def create_random_widget(self, widget_type: str) -> tuple[dict, lv.obj]:
+        """
+        Create a random widget of the specified type and return the widget metadata and object.
+        If random_state is enabled, the widget state is randomized.
+        """
         if widget_type not in widget_types:
             raise ValueError(f'Invalid widget type: {widget_type} (valid options: {",".join(widget_types)})')
         widget = widget_mapping[widget_type]({})
@@ -158,6 +187,9 @@ class RandomUI:
         return widget_info, widget # type: ignore
     
     def randomize_style(self, widget: lv.obj):
+        """
+        Randomize the style properties of a widget by creating a style object and setting randomly chosen properties with random values.
+        """
         # Create style object
         style = lv.style_t()
         # Choose a random amount of style properties to set
@@ -225,15 +257,22 @@ class RandomUI:
         widget.add_style(style, lv.PART.MAIN)
     
     def get_root_widget(self):
+        """Return the root widget of the UI."""
         return self.container
     
     def get_ui(self) -> UI:
+        """Return a UI object (special dictionary) containing the screen dimensions and all widget position metadata required for bounding box annotation."""
         ui = UI()
         ui['count'] = self.widgets['count']
         ui['objects'] = self.widgets['objects']
         return ui
     
     def cleanup(self):
+        """
+        Cleanup the screen and widgets, destroying all created objects.
+        Note that this function will cause a known error when sub-widgets are indirectly deleted by destroying their parent container.
+        That error is safe to ignore, as the widgets should be properly deleted by LVGL.
+        """
         for obj in self.objects:
             if obj is lv.obj:
                 obj.delete()

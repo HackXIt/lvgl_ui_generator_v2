@@ -29,7 +29,7 @@ class UiLoader:
             return json.load(file)
     
     def initialize_screen(self):
-        # Create the screen
+        """Initialize a display driver in the specified width and height of the JSON data to create a window."""
         if "window" not in self.ui or type(self.ui["window"]) is not dict:
             raise ValueError(f"UI must have 'window' property of type dict: {self.ui}")
         if "width" not in self.ui["window"] or type(self.ui["window"]["width"]) is not int:
@@ -43,7 +43,7 @@ class UiLoader:
         self.screen = driver(width=self.width, height=self.height)
 
     def parse_ui(self):
-        # Parse the root element
+        """Parse the UI elements under the 'root' object of the JSON data."""
         if "root" not in self.ui or type(self.ui["root"]) is not dict:
             raise ValueError(f"UI must have 'root' property of type dict: {self.ui}")
         self.root_widget = self.parse_element(self.ui["root"])
@@ -53,6 +53,11 @@ class UiLoader:
         self.root_widget.set_height(self.height)
 
     def parse_element(self, element):
+        """
+        Parse a widget object JSON element and create the corresponding widget.
+        If the element has children, parse them recursively and attach them to the parent widget.
+        If the element has one or more styles, apply them to the created widget.
+        """
         # Create a widget based on the element type
         widget = self.create_widget(element)
         # Process child elements if they exist
@@ -74,6 +79,11 @@ class UiLoader:
         return widget
 
     def create_widget(self, element) -> lv.obj | lv.button | lv.label | lv.image | lv.line | lv.bar | lv.slider | lv.switch | lv.checkbox | lv.roller | lv.dropdown | lv.textarea | lv.chart:
+        """
+        Create an LVGL widget object based on the type specified in the JSON element.
+        If the type is not recognized, a ValueError is raised.
+        If the specified 'id' already exists in previously created widgets, a ValueError is raised.
+        """
         widget = None
         widget_type = element["type"]
         if widget_type not in self.valid_types:
@@ -107,6 +117,12 @@ class UiLoader:
 # NOTE ------------ SPECIAL CREATION METHODS ------------
 
     def create_container(self, element) -> lv.obj:
+        """
+        Create a container widget based on the JSON element.
+        If the element is missing the 'id' or 'options' properties, a ValueError is raised.
+        If the 'layout_type' property is missing or invalid, a ValueError is raised.
+        If the layout type is 'grid' or 'flex', the 'layout_options' property must be present.
+        """
         if "id" not in element or type(element["id"]) is not str:
             raise ValueError(f"Container widget must have 'id' of type str: {element}")
         if "options" not in element or type(element["options"]) is not dict:
@@ -131,6 +147,10 @@ class UiLoader:
         return container
     
     def configure_flex_layout(self, container: lv.obj, options):
+        """
+        Configure the flex layout of a container widget based on the options provided in the JSON element.
+        If the 'flow' property is missing or invalid, a ValueError is raised.
+        """
         if "flow" not in options or options["flow"] not in self.valid_flow:
             raise ValueError(f"Flex layout must have 'flow' property: {options}. Valid options are: {self.valid_flow}")
         container.set_layout(lv.LAYOUT.FLEX)
@@ -149,6 +169,11 @@ class UiLoader:
             container.set_flex_flow(lv.FLEX_FLOW.COLUMN_REVERSE)
 
     def configure_grid_layout(self, container: lv.obj, options):
+        """
+        Configure the grid layout of a container widget based on the options provided in the JSON element.
+        If the 'grid_dsc' property is missing or invalid, a ValueError is raised.
+        If the 'col_dsc' or 'row_dsc' properties are missing or invalid, a ValueError is raised.
+        """
         if "grid_dsc" not in options or type(options["grid_dsc"]) is not dict:
             raise ValueError(f"Grid layout must have 'grid_dsc' of type dict: {options}")
         container.set_layout(lv.LAYOUT.GRID)
@@ -182,6 +207,12 @@ class UiLoader:
         container.set_grid_dsc_array(col_dsc, row_dsc)
 
     def create_random_widget(self, element):
+        """
+        Create a random widget based on the JSON element.
+        A random type is chosen from the 'widget_list' property. The chosen type is then passed to the widget creation function.
+        This is done X times based on the 'count' property.
+        If the element is missing the 'parent_id', 'count', or 'widget_list' properties, a ValueError is raised.
+        """
         if "parent_id" not in element or type(element["parent_id"]) is not str:
             raise ValueError(f"Random widget must have 'parent_id' of type str: {element}")
         if "count" not in element or type(element["count"]) is not int:
@@ -205,6 +236,11 @@ class UiLoader:
         return widget
     
     def place_widget_in_grid(self, widget: lv.obj, child_element):
+        """
+        Place the provided child widget in the grid container widget based on the 'placement' property in the child JSON element.
+        If the 'placement' property is missing or invalid, a ValueError is raised.
+        If the 'col_pos', 'col_span', 'row_pos', or 'row_span' properties are missing or invalid, a ValueError is raised.
+        """
         if "placement" not in child_element or type(child_element["placement"]) is not dict:
             raise ValueError(f"Child element of grid layout must have 'placement' property of type 'dict': {child_element}")
         # placement options: column_align: Unknown, col_pos: int, col_span: int, row_align: Unknown, row_pos: int, row_span: int
@@ -227,6 +263,12 @@ class UiLoader:
 # NOTE ------------ STYLE CREATION METHODS ------------
     
     def create_style(self, style_def):
+        """
+        Create an LVGL style object based on the style definition provided in the JSON data.
+        Provided style property values are converted to the required type, according to conversion rules of the called conversion function.
+        If a style property is not recognized, a message is printed to the console and the property is skipped.
+        If value conversion fails, a message is printed to the console and the property is skipped.
+        """
         print(f"Creating style: {style_def}")
         style = lv.style_t() # FIXME missing parameter 'args' of type '_style_t_type' (unresolved) - ignore?
         style.init()
@@ -251,6 +293,10 @@ class UiLoader:
         return style
     
     def convert_value(self, prop_name, value):
+        """
+        Convert the provided value to the required type based on the property name.
+        If there is no conversion available for the property, None is returned. (i.e. conversion fails)
+        """
         # This function converts the value based on the property name
         if "color" in prop_name:
             converted_value = int(value.strip("#"), 16)
@@ -331,6 +377,11 @@ class UiLoader:
         return None
 
     def apply_style(self, widget, style_name):
+        """
+        Lookup the style name in the list of styles and apply the created style object to the widget.
+        If the style name is not found in the list of styles, a new style is created and added to the list.
+        If the style does not exist in the JSON data, a ValueError is raised.
+        """
         # Style application logic goes here
         # For example, lookup a style in self.data["ui"]["styles"] and apply it to the widget
         if style_name not in self.styles:
@@ -350,14 +401,17 @@ class UiLoader:
         widget.add_style(self.styles[style_name], self.styles[f"{style_name}_selector"])
 
     def update_screen(self):
+        """Re-render the screen & update the layout."""
         lv.screen_load(self.root_widget)
         self.root_widget.update_layout()
 # NOTE ------------ GETTERS ------------
 
     def get_root_widget(self):
+        """Return the root widget object (container) of the UI."""
         return self.root_widget
     
     def get_ui(self) -> UI:
+        """Return a UI object (special dictionary) containing the screen dimensions and all widget position metadata required for bounding box annotation."""
         ui = UI()
         ui["count"] = len(self.widgets)
         self.update_screen()
@@ -377,6 +431,11 @@ class UiLoader:
         return ui
     
     def cleanup(self):
+        """
+        Cleanup the screen and widgets, destroying all created objects.
+        Note that this function will cause a known error when sub-widgets are indirectly deleted by destroying their parent container.
+        That error is safe to ignore, as the widgets should be properly deleted by LVGL.
+        """
         # Cleanup the screen and widgets (passing twice to delete widgets before containers)
         for id, widget in self.widgets.items():
             try:

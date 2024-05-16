@@ -1,4 +1,5 @@
 class UI(dict):
+    """Custom dictionary class for UI metadata."""
     def __init__(self):
         super().__init__()
         self['count'] = 0
