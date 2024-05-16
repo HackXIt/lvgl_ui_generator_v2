@@ -11,17 +11,19 @@ lv_conf_original = os.path.join(os.path.curdir, 'lv_micropython', 'lib', 'lv_bin
 lv_conf_temp = os.path.join(os.path.curdir, 'lv_conf.tmp')
 
 @task
-def generate_random(ctx, widget_list: str = 'button label line bar slider switch checkbox roller dropdown textarea chart', width: int = 420, height: int = 320, count: int = 1, layout: str = 'none', output: str = 'screenshot.jpg', normalize: bool = False):
-    args = [micropython, main, '-m', 'generator', '-W', str(width), '-H', str(height), '-c', str(count), '-o', output, '-l', layout]
+def generate_random(ctx, widget_list: str = 'arc bar button buttonmatrix calendar checkbox dropdown label roller scale slider spinbox switch table textarea', width: int = 640, height: int = 640, count: int = 4, layout: str = 'none', output: str = 'screenshot.jpg', normalize: bool = True, random_state: bool = True):
+    args = [micropython, main, '-m', 'random', '-W', str(width), '-H', str(height), '-c', str(count), '-o', output, '-l', layout]
     args.append('-t')
     for widget in widget_list.split(' '):
         args.append(widget)
     if normalize:
         args.append('--normalize')
+    if random_state:
+        args.append('--random-state')
     subprocess.run(args)
 
 @task
-def generate_design(ctx, design_file: str ='designs/example.json', output: str = 'screenshot.jpg', normalize: bool = False):
+def generate_design(ctx, design_file: str ='designs/widgets_showcase.json', output: str = 'screenshot.jpg', normalize: bool = True):
     if not os.path.exists(design_file):
         print(f"Design file {design_file} does not exist.")
         return
@@ -31,7 +33,7 @@ def generate_design(ctx, design_file: str ='designs/example.json', output: str =
     subprocess.run(args)
 
 @task
-def convert(ctx, width='420', height='320', input='screenshot.bin', output='screenshot.jpg'):
+def convert(ctx, width='640', height='640', input='screenshot.bin', output='screenshot.jpg'):
     subprocess.run(['poetry', 'run', 'python', jpg_conversion, '-W', width, '-H', height, '-i', input, '-o', output])
 
 @task
