@@ -36,7 +36,7 @@ def main():
     if root_widget is None:
         raise ValueError('Root widget is None')
     print("Taking screenshot...")
-    take_screenshot(root_widget, args.output_file)
+    take_screenshot(args.output_file)
     if args.normalize:
         write_yolo_normalized(ui, output_file=args.output_file.replace('.jpg', '.txt'), width=ui['width'], height=ui['height'])
     else:

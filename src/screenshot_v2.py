@@ -8,16 +8,17 @@ def bgr_to_rgb(data):
         data[i], data[i+2] = data[i+2], data[i]  # Swap the B and R values
     return data
 
-def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
+def take_screenshot(output_file: str, quality:int = 100):
     """Take a screenshot of a container using the LVGL snapshot API and save it to a JPG file."""
     disp = lv.display_get_default()
     width = disp.get_horizontal_resolution()
     height = disp.get_vertical_resolution()
     scrn = lv.screen_active()
-    snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
+    lv.timer_handler()
+    snapshot = lv.snapshot_take(scrn, lv.COLOR_FORMAT.RGB888)
     print(f"Snapshot: {snapshot} ({type(snapshot)}, {snapshot.data_size} bytes)")
-    buffer = snapshot.data.__dereference__(snapshot.data_size)
-    data = bgr_to_rgb(buffer)
+    data = snapshot.data.__dereference__(snapshot.data_size)
+    # data = bgr_to_rgb(buffer)
     try:
         jpeg.encode(data, output_file, width, height, quality)
     except MemoryError as e:
