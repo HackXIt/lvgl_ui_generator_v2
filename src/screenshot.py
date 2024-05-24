@@ -313,10 +313,12 @@ def bgr_to_rgb(data):
 
 def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
     """Take a screenshot of a container using the LVGL snapshot API and save it to a JPG file."""
+    container.update_layout()
     snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
     print(f"Snapshot: {snapshot} ({type(snapshot)}, {snapshot.data_size} bytes)")
     data_size = snapshot.data_size
     buffer = snapshot.data.__dereference__(data_size)
+    container.update_layout()
     img = image(container.get_width(), container.get_height(), "rgb", bgr_to_rgb(buffer))
     try:
         with open(output_file, 'wb') as f:

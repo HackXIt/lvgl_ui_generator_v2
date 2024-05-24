@@ -1,5 +1,5 @@
 import cli
-from screenshot import take_screenshot
+from screenshot_v2 import take_screenshot
 from yolo import write_yolo_normalized, write_yolo_pixel
 from random_ui import RandomUI
 from design_parser import UiLoader
