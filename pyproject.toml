@@ -12,6 +12,8 @@ numpy = "^1.26.4"
 pillow = "^10.2.0"
 invoke = "^2.2.0"
 mpremote = "^1.22.0"
+pdoc = "^14.5.0"
+mock = "^5.1.0"
 
 [tool.poetry.group.dev.dependencies]
 micropy-cli = "^4.2.2"
