@@ -8,6 +8,8 @@ It has two modes of operation:
 - **Random mode**: Generates a random UI with a specified number of widgets placed on a white background. It requires a provided list of widget types to randomly choose from.
 - **Design mode**: Generates a UI based on a provided JSON design file. The design file describes the whole window, including styles, widgets and certain properties. There is a special `random` widget, which can be used to randomize widget creation in certain areas of the design. This mode is useful in creating more realistic looking user interfaces, as the random mode does not accomodate for styles regarding the containers.
 
+🗎 [Documentation](https://hackxit.github.io/lvgl_ui_generator_v2/)
+
 # Prerequisites & Installation
 
 In order to run the UI generator, you need to compile the micropython binary with the LVGL bindings. To make this process easier, the project has a `tasks.py` file, which already contains necessary routines via the usage of [`invoke`](https://www.pyinvoke.org/).
