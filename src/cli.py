@@ -2,6 +2,16 @@ import argparse
 import sys
 
 def process_design_arguments(parser: argparse.ArgumentParser, print_help: bool = False):
+    """
+    **Params:**
+    - `parser` The parser object to process the arguments with.
+    - `print_help` A flag to determine if the help message for this mode should be printed. Default is False.
+
+    **Returns:**
+    - `args.Namespace` The parsed arguments for the design mode, including the initial general arguments.
+
+    Process the arguments for the design mode subparser.
+    """
     parser.add_argument('-f', '--file', required=True, type=str, help='path to JSON design file')
     if print_help:
         parser.usage(True)
@@ -10,6 +20,16 @@ def process_design_arguments(parser: argparse.ArgumentParser, print_help: bool =
     return args
 
 def process_generator_arguments(parser: argparse.ArgumentParser, print_help: bool = False):
+    """
+    **Params:**
+    - `parser` The parser object to process the arguments with.
+    - `print_help` A flag to determine if the help message for this mode should be printed. Default is False.
+
+    **Returns:**
+    - `args.Namespace` The parsed arguments for the generator mode, including the initial general arguments.
+
+    Process the arguments for the generator mode subparser.
+    """
     parser.add_argument('-W', '--width', type=int, default=420, required=True, help='the width of the UI')
     parser.add_argument('-H', '--height', type=int, default=320, required=True, help='the height of the UI')
     parser.add_argument('-c', '--widget_count', type=int, default=1, required=True, help='the count of widgets')
@@ -23,6 +43,12 @@ def process_generator_arguments(parser: argparse.ArgumentParser, print_help: boo
     return args
 
 def process_arguments():
+    """
+    **Returns:**
+    - `args.Namespace` The parsed arguments for the UI generator.
+
+    Process the arguments for the UI generator.
+    """
     # Create the parser
     parser = argparse.ArgumentParser(description='Process CLI arguments for the UI generator.')
     parser.add_argument('-m', '--mode', type=str, help='the mode to run the program in')

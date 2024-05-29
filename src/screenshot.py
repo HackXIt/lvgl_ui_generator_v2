@@ -1,5 +1,11 @@
-import lvgl as lv
-from struct import pack
+import sys
+if sys.implementation.name == "micropython":
+    from struct import pack
+    import lvgl as lv
+else:
+    import mock
+    from .mock.lvgl import lv
+    from struct import pack
 # import jpeg
 
 # NOTE The following code is taken from the JPEG encoder of: https://github.com/xxyxyz/flat/blob/master/flat/jpeg.py
@@ -305,14 +311,26 @@ def serialize(image, quality):
         b'\xff\xd9']) # EOI
 
 def bgr_to_rgb(data):
-    """Swap the BGR values to RGB in a flat bytearray."""
+    """
+    **Params**
+    - `data` A flat bytearray in BGR format.
+
+    Swap the BGR values to RGB in a flat bytearray.
+    """
     # Assume data is a flat bytearray in BGR format
     for i in range(0, len(data), 3):
         data[i], data[i+2] = data[i+2], data[i]  # Swap the B and R values
     return data
 
 def take_screenshot(container: lv.obj, output_file: str, quality:int = 100):
-    """Take a screenshot of a container using the LVGL snapshot API and save it to a JPG file."""
+    """
+    **Params**
+    - `container` The container object to take a screenshot of.
+    - `output_file` The file path to save the screenshot to.
+    - `quality` The quality of the JPG image (0-100).
+
+    Take a screenshot of a container using the LVGL snapshot API and save it to a JPG file.
+    """
     container.update_layout()
     snapshot = lv.snapshot_take(container, lv.COLOR_FORMAT.NATIVE)
     print(f"Snapshot: {snapshot} ({type(snapshot)}, {snapshot.data_size} bytes)")

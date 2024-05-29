@@ -1,9 +1,36 @@
-import lvgl as lv
-import random
-from global_definitions import ascii_letters
+import sys
+if sys.implementation.name == "micropython":
+    import lvgl as lv
+    import random
+    from global_definitions import ascii_letters
+else:
+    import mock
+    from .mock.lvgl import lv
+    import random
+    from .global_definitions import ascii_letters
 
 # NOTE ------------ WIDGET HELPER METHODS ------------
 def randomize_state(widget: lv.obj):
+    """
+    **Params**
+    - `widget` The widget to randomize the state of.
+
+    **Raises**:
+    - `AttributeError` If the widget does not have a 'state' property.
+
+    Randomize the state of a widget.
+
+    **Example**
+    ```json
+    {
+        "type": "button",
+        "options": {
+            "text": "Button",
+            "state": "focused"
+        }
+    }
+    ```
+    """
     if hasattr(widget, "set_state"):
         state = random.choice([lv.STATE.CHECKED, lv.STATE.DISABLED, lv.STATE.FOCUSED, lv.STATE.PRESSED, lv.STATE.HOVERED, lv.STATE.EDITED])
         widget.set_state(state, True) # Add the state
@@ -12,6 +39,30 @@ def randomize_state(widget: lv.obj):
 
 # NOTE ------------ WIDGET CREATION METHODS ------------
 def create_arc(element) -> lv.arc:
+    """
+    **Params**
+    - `element` The JSON element to create the arc widget from.
+
+    **Returns**
+    - `lv.arc` The created arc widget.
+
+    Create an arc widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "arc",
+        "options": {
+            "mode": "normal",
+            "range_max": 100,
+            "range_min": 0,
+            "value": 50,
+            "rotation": 0,
+            "angle_range": [0, 360]
+        }
+    }
+    ```
+    """
     widget = lv.arc(lv.screen_active())
     if "options" in element:
         mode = element["options"].get("mode", "normal")
@@ -36,6 +87,27 @@ def create_arc(element) -> lv.arc:
     return widget
 
 def create_bar(element) -> lv.bar:
+    """
+    **Params**
+    - `element` The JSON element to create the bar widget from.
+
+    **Returns**
+    - `lv.bar` The created bar widget.
+
+    Create a bar widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "bar",
+        "options": {
+            "range_min": 0,
+            "range_max": 100,
+            "value": 50
+        }
+    }
+    ```
+    """
     widget = lv.bar(lv.screen_active())
     if "options" in element:
         range_min = element["options"].get("range_min", 0)
@@ -49,6 +121,26 @@ def create_bar(element) -> lv.bar:
     return widget
 
 def create_button(element) -> lv.button:
+    """
+    **Params**
+    - `element` The JSON element to create the button widget from.
+
+    **Returns**
+    - `lv.button` The created button widget.
+
+    Create a button widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "button",
+        "options": {
+            "text": "Button",
+            "symbol": "OK"
+        }
+    }
+    ```
+    """
     widget = lv.button(lv.screen_active())
     if "options" in element:
         # FIXME when both text and symbol are provided, they will overlap, but should be placed side by side
@@ -67,6 +159,29 @@ def create_button(element) -> lv.button:
     return widget
 
 def create_buttonmatrix(element) -> lv.buttonmatrix:
+    """
+    **Params**
+    - `element` The JSON element to create the buttonmatrix widget from.
+
+    **Returns**
+    - `lv.buttonmatrix` The created buttonmatrix widget.
+
+    Create a buttonmatrix widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "buttonmatrix",
+        "options": {
+            "map": [
+                ["A", "B", "C"],
+                ["D", "E", "F"],
+                ["G", "H", "I"]
+            ]
+        }
+    }
+    ```
+    """
     widget = lv.buttonmatrix(lv.screen_active())
     if "options" in element:
         map = element["options"].get("map", [random.choice(ascii_letters) for _ in range(random.randint(1, 10))])
@@ -87,6 +202,33 @@ def create_buttonmatrix(element) -> lv.buttonmatrix:
     return widget
 
 def create_calendar(element) -> lv.calendar:
+    """
+    **Params**
+    - `element` The JSON element to create the calendar widget from.
+
+    **Returns**
+    - `lv.calendar` The created calendar widget.
+
+    **Raises**:
+    - `ValueError` If the date dictionary format is invalid (missing 'year', 'month', 'day' keys).
+    - `ValueError` If the date_highlights list format is invalid.
+
+    Create a calendar widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "calendar",
+        "options": {
+            "current_date": {"year": 2024, "month": 3, "day": 30},
+            "showed_date": {"year": 2024, "month": 3},
+            "date_highlights": [
+                {"year": 2024, "month": 3, "day": 29}
+            ]
+        }
+    }
+    ```
+    """
     widget = lv.calendar(lv.screen_active())
     if "options" in element:
         current_date = element["options"].get("current_date", {"year": 2024, "month": 3, "day": 30})
@@ -122,16 +264,53 @@ def create_calendar(element) -> lv.calendar:
     return widget
 
 def create_canvas(element) -> lv.canvas:
+    """
+    **Params**
+    - `element` The JSON element to create the canvas widget from.
+
+    **Returns**
+    - `lv.canvas` The created canvas widget.
+
+    Create a canvas widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement canvas widget
     widget = lv.canvas(lv.screen_active())
     return widget
 
 def create_chart(element) -> lv.chart:
+    """
+    **Params**
+    - `element` The JSON element to create the chart widget from.
+
+    **Returns**
+    - `lv.chart` The created chart widget.
+
+    Create a chart widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement chart widget (also tough to implement)
     widget = lv.chart(lv.screen_active())
     return widget
 
 def create_checkbox(element) -> lv.checkbox:
+    """
+    **Params**
+    - `element` The JSON element to create the checkbox widget from.
+
+    **Returns**
+    - `lv.checkbox` The created checkbox widget.
+
+    Create a checkbox widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "checkbox",
+        "options": {
+            "state": "checked"
+        }
+    }
+    ```
+    """
     widget = lv.checkbox(lv.screen_active())
     if "options" in element:
         state = element["options"].get("state", "disabled")
@@ -142,6 +321,25 @@ def create_checkbox(element) -> lv.checkbox:
     return widget
 
 def create_dropdown(element) -> lv.dropdown:
+    """
+    **Params**
+    - `element` The JSON element to create the dropdown widget from.
+
+    **Returns**
+    - `lv.dropdown` The created dropdown widget.
+
+    Create a dropdown widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "dropdown",
+        "options": {
+            "entries": ["Option 1", "Option 2", "Option 3"]
+        }
+    }
+    ```
+    """
     widget = lv.dropdown(lv.screen_active())
     if "options" in element:
         entries = element["options"].get("entries", [])
@@ -152,22 +350,68 @@ def create_dropdown(element) -> lv.dropdown:
     return widget
 
 def create_image(element) -> lv.image:
+    """
+    **Params**
+    - `element` The JSON element to create the image widget from.
+
+    **Returns**
+    - `lv.image` The created image widget.
+
+    Create an image widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement image widget
     widget = lv.image(lv.screen_active())
     # widget.set_src(lv.SYMBOL.OK)
     return widget
 
 def create_imagebutton(element) -> lv.imagebutton:
+    """
+    **Params**
+    - `element` The JSON element to create the imagebutton widget from.
+
+    **Returns**
+    - `lv.imagebutton` The created imagebutton widget.
+
+    Create an imagebutton widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement image_button widget
     widget = lv.imagebutton(lv.screen_active())
     return widget
 
 def create_keyboard(element) -> lv.keyboard:
+    """
+    **Params**
+    - `element` The JSON element to create the keyboard widget from.
+
+    **Returns**
+    - `lv.keyboard` The created keyboard widget.
+
+    Create a keyboard widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement keyboard widget
     widget = lv.keyboard(lv.screen_active())
     return widget
 
 def create_label(element) -> lv.label:
+    """
+    **Params**
+    - `element` The JSON element to create the label widget from.
+
+    **Returns**
+    - `lv.label` The created label widget.
+
+    Create a label widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "label",
+        "options": {
+            "text": "Hello, World!"
+        }
+    }
+    ```
+    """
     widget = lv.label(lv.screen_active())
     if "options" in element:
         text = element["options"].get("text", "".join([random.choice(ascii_letters) for _ in range(random.randint(1, 10))]))
@@ -177,6 +421,25 @@ def create_label(element) -> lv.label:
     return widget
 
 def create_led(element) -> lv.led:
+    """
+    **Params**
+    - `element` The JSON element to create the led widget from.
+
+    **Returns**
+    - `lv.led` The created led widget.
+
+    Create an led widget from a JSON element. **(visually broken since we do nothing functional with it)**
+
+    **Example**
+    ```json
+    {
+        "type": "led",
+        "options": {
+            "brightness": 100
+        }
+    }
+    ```
+    """
     widget = lv.led(lv.screen_active())
     if "options" in element:
         brightness = element["options"].get("brightness", 100)
@@ -186,6 +449,15 @@ def create_led(element) -> lv.led:
     return widget
 
 def create_line(element) -> lv.line:
+    """
+    **Params**
+    - `element` The JSON element to create the line widget from.
+
+    **Returns**
+    - `lv.line` The created line widget.
+
+    Create a line widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement line widget (also tough to implement)
     widget = lv.line(lv.screen_active())
     # if "options" in element:
@@ -194,21 +466,69 @@ def create_line(element) -> lv.line:
     return widget
 
 def create_list(element) -> lv.list:
+    """
+    **Params**
+    - `element` The JSON element to create the list widget from.
+
+    **Returns**
+    - `lv.list` The created list widget.
+
+    Create a list widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement list widget
     widget = lv.list(lv.screen_active())
     return widget
 
 def create_menu(element) -> lv.menu:
+    """
+    **Params**
+    - `element` The JSON element to create the menu widget from.
+
+    **Returns**
+    - `lv.menu` The created menu widget.
+
+    Create a menu widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement menu widget
     widget = lv.menu(lv.screen_active())
     return widget
 
 def create_messagebox(element) -> lv.msgbox:
+    """
+    **Params**
+    - `element` The JSON element to create the messagebox widget from.
+
+    **Returns**
+    - `lv.msgbox` The created messagebox widget.
+
+    Create a messagebox widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement messagebox widget
     widget = lv.msgbox(lv.screen_active())
     return widget
 
 def create_roller(element) -> lv.roller:
+    """
+    **Params**
+    - `element` The JSON element to create the roller widget from.
+
+    **Returns**
+    - `lv.roller` The created roller widget.
+
+    Create a roller widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "roller",
+        "options": {
+            "entries": ["Option 1", "Option 2", "Option 3"],
+            "mode": "infinite",
+            "visible_rows": 3
+        }
+    }
+    ```
+    """
     widget = lv.roller(lv.screen_active())
     if "options" in element:
         entries = element["options"].get("entries", [random.choice(ascii_letters) for _ in range(1, random.randint(1, 10))])
@@ -222,6 +542,32 @@ def create_roller(element) -> lv.roller:
     return widget
 
 def create_scale(element) -> lv.scale:
+    """
+    **Params**
+    - `element` The JSON element to create the scale widget from.
+
+    **Returns**
+    - `lv.scale` The created scale widget.
+
+    Create a scale widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "scale",
+        "options": {
+            "mode": "horizontal_bottom",
+            "show_label": true,
+            "total_ticks": 100,
+            "major_ticks": 10,
+            "major_range": 100,
+            "minor_range": 10,
+            "sections": 10,
+            "labels": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        }
+    }
+    ```
+    """
     widget = lv.scale(lv.screen_active())
     if "options" in element:
         mode = element["options"].get("mode", "horizontal_bottom")
@@ -250,6 +596,27 @@ def create_scale(element) -> lv.scale:
     return widget
 
 def create_slider(element) -> lv.slider:
+    """
+    **Params**
+    - `element` The JSON element to create the slider widget from.
+
+    **Returns**
+    - `lv.slider` The created slider widget.
+
+    Create a slider widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "slider",
+        "options": {
+            "range_min": 0,
+            "range_max": 100,
+            "value": 50
+        }
+    }
+    ```
+    """
     widget = lv.slider(lv.screen_active())
     if "options" in element:
         range_min = element["options"].get("range_min", 0)
@@ -263,11 +630,42 @@ def create_slider(element) -> lv.slider:
     return widget
 
 def create_spangroup(element) -> lv.spangroup:
+    """
+    **Params**
+    - `element` The JSON element to create the spangroup widget from.
+
+    **Returns**
+    - `lv.spangroup` The created spangroup widget.
+
+    Create a spangroup widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement span widget
     widget = lv.spangroup(lv.screen_active())
     return widget
 
 def create_spinbox(element) -> lv.spinbox:
+    """
+    **Params**
+    - `element` The JSON element to create the spinbox widget from.
+
+    **Returns**
+    - `lv.spinbox` The created spinbox widget.
+
+    Create a spinbox widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "spinbox",
+        "options": {
+            "range_min": 0,
+            "range_max": 100,
+            "step": 1,
+            "value": 50
+        }
+    }
+    ```
+    """
     widget = lv.spinbox(lv.screen_active())
     if "options" in element:
         range_min = element["options"].get("range_min", 0)
@@ -288,11 +686,39 @@ def create_spinbox(element) -> lv.spinbox:
     return widget
 
 def create_spinner(element) -> lv.spinner:
+    """
+    **Params**
+    - `element` The JSON element to create the spinner widget from.
+
+    **Returns**
+    - `lv.spinner` The created spinner widget.
+
+    Create a spinner widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement spinner widget
     widget = lv.spinner(lv.screen_active())
     return widget
 
 def create_switch(element) -> lv.switch:
+    """
+    **Params**
+    - `element` The JSON element to create the switch widget from.
+
+    **Returns**
+    - `lv.switch` The created switch widget.
+
+    Create a switch widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "switch",
+        "options": {
+            "state": "checked"
+        }
+    }
+    ```
+    """
     widget = lv.switch(lv.screen_active())
     if "options" in element:
         state = element["options"].get("state", 'default')
@@ -303,6 +729,32 @@ def create_switch(element) -> lv.switch:
     return widget
 
 def create_table(element) -> lv.table:
+    """
+    **Params**
+    - `element` The JSON element to create the table widget from.
+
+    **Returns**
+    - `lv.table` The created table widget.
+
+    Create a table widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "table",
+        "options": {
+            "column_count": 3,
+            "row_count": 3,
+            "column_widths": [50, 100, 150],
+            "cell_contents": [
+                ["A1", "B1", "C1"],
+                ["A2", "B2", "C2"],
+                ["A3", "B3", "C3"]
+            ]
+        }
+    }
+    ```
+    """
     widget = lv.table(lv.screen_active())
     if "options" in element:
         col_cnt = element["options"].get("column_count", 1)
@@ -323,11 +775,39 @@ def create_table(element) -> lv.table:
     return widget
 
 def create_tabview(element) -> lv.tabview:
+    """
+    **Params**
+    - `element` The JSON element to create the tabview widget from.
+
+    **Returns**
+    - `lv.tabview` The created tabview widget.
+
+    Create a tabview widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement tabview widget
     widget = lv.tabview(lv.screen_active())
     return widget
 
 def create_textarea(element) -> lv.textarea:
+    """
+    **Params**
+    - `element` The JSON element to create the textarea widget from.
+
+    **Returns**
+    - `lv.textarea` The created textarea widget.
+
+    Create a textarea widget from a JSON element.
+
+    **Example**
+    ```json
+    {
+        "type": "textarea",
+        "options": {
+            "text": "Hello, World!"
+        }
+    }
+    ```
+    """
     widget = lv.textarea(lv.screen_active())
     if "options" in element:
         text = element["options"].get("text", " ".join([c for _ in range(random.randint(10, 100)) for c in ascii_letters]))
@@ -337,11 +817,29 @@ def create_textarea(element) -> lv.textarea:
     return widget
 
 def create_tileview(element) -> lv.tileview:
+    """
+    **Params**
+    - `element` The JSON element to create the tileview widget from.
+
+    **Returns**
+    - `lv.tileview` The created tileview widget.
+
+    Create a tileview widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement tileview widget
     widget = lv.tileview(lv.screen_active())
     return widget
 
 def create_window(element) -> lv.win:
+    """
+    **Params**
+    - `element` The JSON element to create the window widget from.
+
+    **Returns**
+    - `lv.win` The created window widget.
+
+    Create a window widget from a JSON element. **(not implemented yet)**
+    """
     # TODO Implement window widget
     widget = lv.win(lv.screen_active())
     return widget
@@ -378,3 +876,4 @@ widget_mapping = {
     "tileview": create_tileview,
     "window": create_window
 }
+"""A mapping of widget types to their respective creation methods"""

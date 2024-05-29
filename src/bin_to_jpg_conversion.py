@@ -1,8 +1,21 @@
+"""
+A simple script to convert a created binary image file to a JPEG image.
+
+The script can convert binary image data to JPEG images.
+
+The script requires the width and height of the image to be provided as arguments.
+
+The binary image file should contain the raw pixel data of the image (i.e. bytes representing the pixel values, no headers).
+"""
+
 import argparse
 import numpy as np
 from PIL import Image
 
 def parse_args():
+    """
+    Parse command line arguments for the script.
+    """
     parser = argparse.ArgumentParser(description='Convert a binary RGB565 or RGB888 image file to a JPEG image.')
     parser.add_argument('-W', '--width', type=int, required=True, help='Width of the image.')
     parser.add_argument('-H', '--height', type=int, required=True, help='Height of the image.')
@@ -11,6 +24,9 @@ def parse_args():
     return parser.parse_args()
 
 def rgb565_to_rgb888(rgb565):
+    """
+    Convert RGB565 pixel data to RGB888 pixel data.
+    """
     # Mask out the components
     r = (rgb565 & 0xF800) >> 11
     g = (rgb565 & 0x07E0) >> 5
@@ -22,6 +38,14 @@ def rgb565_to_rgb888(rgb565):
     return r, g, b
 
 def main():
+    """
+    Main function for the script.
+
+    The script reads the raw image data from the input file and determines the format of the data (RGB565 or RGB888),
+    If the data is in RGB565 format, it converts it to RGB888 format.
+
+    The script then creates a Pillow image from the pixel data and saves it as a JPEG image.
+    """
     args = parse_args()
 
     # Constants for image dimensions

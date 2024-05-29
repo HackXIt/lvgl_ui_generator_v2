@@ -1,7 +1,32 @@
-from ui import UI
+pdoc = {}
+
+pdoc['write_yolo_pixel'] = """
+**Params:**
+- `ui` The UI object.
+- `output_file` The file path to save the YOLO .txt file to.
+
+This function writes the .txt file in the YOLO format using pixel values, with the widget's bounding boxes and class labels.
+"""
+pdoc['write_yolo_normalized'] = """
+**Params:**
+- `ui` The UI object.
+- `output_file` The file path to save the YOLO .txt file to.
+
+This function writes the .txt file in the YOLO format using normalized values, with the widget's bounding boxes and class labels.
+"""
+
+import sys
+if sys.implementation.name == "micropython":
+    from ui import UI
+else:
+    from .ui import UI
 
 def write_yolo_pixel(ui: UI, output_file: str):
     """
+    **Params:**
+    - `ui` The UI object.
+    - `output_file` The file path to save the YOLO .txt file to.
+
     This function writes the .txt file in the YOLO format using pixel values, with the widget's bounding boxes and class labels.
     """
     ui.verify_objects()
@@ -12,6 +37,10 @@ def write_yolo_pixel(ui: UI, output_file: str):
 
 def write_yolo_normalized(ui: UI, output_file: str, width: int, height: int):
     """
+    **Params:**
+    - `ui` The UI object.
+    - `output_file` The file path to save the YOLO .txt file to.
+
     This function writes the .txt file in the YOLO format using normalized values, with the widget's bounding boxes and class labels.
     """
     ui.verify_objects()

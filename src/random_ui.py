@@ -1,22 +1,52 @@
-from display_driver_utils import driver
-import lvgl as lv
-import random
-# NOTE typing not available in micropython and making it work is difficult
-# from typing import List, Tuple, Self
-import time
-from ui import UI
-from widget import *
-from global_definitions import widget_types, ascii_letters
+import sys
+if sys.implementation.name == "micropython":
+    from display_driver_utils import driver
+    import lvgl as lv
+    import random
+    # NOTE typing not available in micropython and making it work is difficult
+    # from typing import List, Tuple, Self
+    import time
+    from ui import UI
+    from widget import *
+    from global_definitions import widget_types, ascii_letters
+else:
+    import mock
+    from .mock.display import driver
+    from .mock.lvgl import lv
+    from .ui import UI
+    from .widget import *
+    from .global_definitions import widget_types, ascii_letters
+    import random
+    # from typing import List, Tuple, Self
+    import time
 
 class SpatialMap:
-    """A simple spatial map to keep track of occupied areas in a container."""
+    """
+    A simple spatial map to keep track of occupied areas in a container.
+
+    **Object Attributes:**
+    - `width` The width of the container.
+    - `height` The height of the container.
+    - `occupied` A list of dictionaries representing occupied areas in the container.
+    """
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.occupied = []
 
     def is_space_available(self, x, y, w, h):
-        """Check if the given space is available for a widget."""
+        """
+        **Params:**
+        - `x` The x-coordinate of the space.
+        - `y` The y-coordinate of the space.
+        - `w` The width of the space.
+        - `h` The height of the space.
+
+        **Returns:**
+        - `bool` True if the space is available, False otherwise.
+
+        Check if the given space is available for a widget.
+        """
         # Check if within container boundaries
         if x + w > self.width or y + h > self.height:
             return False
@@ -29,11 +59,27 @@ class SpatialMap:
         return True
 
     def occupy_space(self, x, y, w, h):
-        """Mark the given space as occupied."""
+        """
+        **Params:**
+        - `x` The x-coordinate of the space.
+        - `y` The y-coordinate of the space.
+        - `w` The width of the space.
+        - `h` The height of the space.
+
+        Mark the given space as occupied, by adding it to the list of occupied areas.
+        """
         self.occupied.append({'x': x, 'y': y, 'width': w, 'height': h})
 
-def place_widget(container, widget, spatial_map):
+def place_widget(container: lv.obj, widget: lv.obj, spatial_map: SpatialMap):
     """
+    **Params:**
+    - `container` The container to place the widget in.
+    - `widget` The widget to place.
+    - `spatial_map` The spatial map to check for available space.
+
+    **Returns:**
+    - `bool` True if the widget was placed successfully, False otherwise.
+
     Place a widget in a container, avoiding overlap with other widgets.
     Placement occurs virtually be checking if the widget fits in the container using a spatial map.
     The placing is done randomly within the container space and by checking the spatial map to avoid overlap with other widgets.
@@ -49,6 +95,21 @@ def place_widget(container, widget, spatial_map):
     return False  # Could not place the widget
 
 class RandomUI:
+    """
+    A class to generate a random UI window with a specified width, height, widget count, widget types, output file, layout, and random state.
+
+    **Class Attributes:**
+    - `layout_options` A list of valid layout options.
+
+    **Object Attributes:**
+    - `width` The width of the UI window.
+    - `height` The height of the UI window.
+    - `widget_count` The number of widgets to generate.
+    - `widget_types` A list of widget types to choose from.
+    - `output_file` The output file name.
+    - `layout` The layout type to use.
+    - `random_state` A boolean flag to randomize widget state.
+    """
     layout_options = ['flex', 'grid', 'none']
     def __init__(self, width: int, height: int, widget_count: int, widget_types: list[str], output_file: str, layout: str, random_state: bool = False):
         # Store the input parameters
@@ -69,7 +130,15 @@ class RandomUI:
         driver(width=self.width, height=self.height)
     
     def create_random_ui(self):
-        """Create a random UI window with the specified width and height."""
+        """
+        **Returns**:
+        - `Self`
+
+        **Raises**:
+        - `ValueError` If the layout is not a valid option.
+
+        Create a random UI window with the specified width and height.
+        """
         if self.layout not in self.layout_options:
             raise ValueError(f'Invalid layout: {self.layout} (valid options: {",".join(self.layout_options)})')
         # Create a screen
@@ -86,7 +155,9 @@ class RandomUI:
         return self
 
     def create_random_layout_flex(self):
-        """Create a container layout using the flex layout."""
+        """
+        Create a container layout using the flex layout.
+        """
         self.container.set_layout(lv.LAYOUT.FLEX)
         self.container.set_flex_flow(lv.FLEX_FLOW.ROW_WRAP)
         print(f'{self.widget_count}: {type(self.widget_count)}')
@@ -111,7 +182,7 @@ class RandomUI:
         print(self.widgets)
 
     def create_random_layout_grid(self):
-        """Create a container layout using the grid layout. (Not implemented)"""
+        """Create a container layout using the grid layout. **(Not implemented)**"""
         ...
     
     def create_random_layout_none(self):
@@ -151,6 +222,13 @@ class RandomUI:
 
     def place_widget(self, widget, spatial_map: SpatialMap):
         """
+        **Params:**
+        - `widget` The widget to place.
+        - `spatial_map` The spatial map to check for available space.
+
+        **Returns:**
+        - `bool` True if the widget was placed successfully, False otherwise.
+
         Place a widget in a container, avoiding overlap with other widgets.
         Placement occurs virtually be checking if the widget fits in the container using a spatial map.
         The placing is done randomly within the container space and by checking the spatial map to avoid overlap with other widgets.
@@ -168,8 +246,14 @@ class RandomUI:
 
     def create_random_widget(self, widget_type: str) -> tuple[dict, lv.obj]:
         """
+        **Params:**
+        - `widget_type` The type of widget to create.
+
+        **Returns:**
+        - `Tuple[dict, lv.obj]` A tuple containing the widget metadata and object.
+
         Create a random widget of the specified type and return the widget metadata and object.
-        If random_state is enabled, the widget state is randomized.
+        If `random_state` is enabled, the widget state is randomized.
         """
         if widget_type not in widget_types:
             raise ValueError(f'Invalid widget type: {widget_type} (valid options: {",".join(widget_types)})')
@@ -188,6 +272,9 @@ class RandomUI:
     
     def randomize_style(self, widget: lv.obj):
         """
+        **Params:**
+        - `widget` The widget to randomize the style of.
+
         Randomize the style properties of a widget by creating a style object and setting randomly chosen properties with random values.
         """
         # Create style object
@@ -257,11 +344,16 @@ class RandomUI:
         widget.add_style(style, lv.PART.MAIN)
     
     def get_root_widget(self):
-        """Return the root widget of the UI."""
+        """Return the root widget (container) of the UI."""
         return self.container
     
     def get_ui(self) -> UI:
-        """Return a UI object (special dictionary) containing the screen dimensions and all widget position metadata required for bounding box annotation."""
+        """
+        **Returns:**
+        - `UI` The UI object containing the metadata.
+
+        Return a UI object (special dictionary) containing the screen dimensions and all widget position metadata required for bounding box annotation.
+        """
         ui = UI()
         ui['count'] = self.widgets['count']
         ui['objects'] = self.widgets['objects']

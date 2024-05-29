@@ -1,14 +1,30 @@
-import cli
-from screenshot_v2 import take_screenshot
-from yolo import write_yolo_normalized, write_yolo_pixel
-from random_ui import RandomUI
-from design_parser import UiLoader
+import sys
+if sys.implementation.name == "micropython":
+    import cli
+    from screenshot_v2 import take_screenshot
+    from yolo import write_yolo_normalized, write_yolo_pixel
+    from random_ui import RandomUI
+    from design_parser import UiLoader
+else:
+    import mock
+    from .cli import *
+    from .screenshot_v2 import take_screenshot
+    from .yolo import write_yolo_normalized, write_yolo_pixel
+    from .random_ui import RandomUI
+    from .design_parser import UiLoader
 
 ui = None
 # WINDOW_WIDTH = 800
 # WINDOW_HEIGHT = 800
 
 def main():
+    """
+    **Raises**:
+    - `ValueError` If UI object is None.
+    - `ValueError` If root widget is None.
+
+    Main function to generate UI and take screenshot.
+    """
     global ui
     args = cli.process_arguments()
     root_widget = None
