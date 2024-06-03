@@ -93,6 +93,8 @@ src    </h1>
 <li><strong>Design mode</strong>: Generates a UI based on a provided JSON design file. The design file describes the whole window, including styles, widgets and certain properties. There is a special <code>random</code> widget, which can be used to randomize widget creation in certain areas of the design. This mode is useful in creating more realistic looking user interfaces, as the random mode does not accomodate for styles regarding the containers.</li>
 </ul>
 
+<p>🗎 <a href="https://hackxit.github.io/lvgl_ui_generator_v2/">Documentation</a></p>
+
 <h1 id="prerequisites-installation">Prerequisites &amp; Installation</h1>
 
 <p>In order to run the UI generator, you need to compile the micropython binary with the LVGL bindings. To make this process easier, the project has a <code>tasks.py</code> file, which already contains necessary routines via the usage of <a href="https://www.pyinvoke.org/"><code>invoke</code></a>.</p>
@@ -992,13 +994,16 @@ For widget definition, not all properties are required and if some are missing, 
 
                         <label class="view-source-button" for="mod-src-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="n">README_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;README.md&#39;</span><span class="p">)</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">README_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a>    <span class="n">README</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">7</span></a><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">README</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">import</span> <span class="nn">os</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="n">README_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;README.md&#39;</span><span class="p">)</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">README_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="n">README</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="c1"># Fix the path of images in the READM: https://github.com/mitmproxy/pdoc/issues/696</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">README</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;./docs/assets/&#39;</span><span class="p">,</span> <span class="s1">&#39;./assets/&#39;</span><span class="p">)</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">README</span>
 </span></pre></div>
 
 
